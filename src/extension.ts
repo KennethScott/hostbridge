@@ -9,7 +9,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-		console.log('Congratulations, your extension "hostbridge" is now active!');
+	console.log('Congratulations, your extension "hostbridge" is now active!');
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
@@ -25,37 +25,24 @@ export function activate(context: vscode.ExtensionContext) {
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	let disposable2 = vscode.commands.registerCommand('extension.make', async () => {
-		// The code you place here will be executed every time your command is executed
-		
-		// const baseUrl = 'www.random.org/integers';
-		// const queryString = '?num=100&min=1&max=100&col=5&base=10&format=html&rnd=new';
-		// var options = {
-		// 	uri: baseUrl + queryString,
-		// };
-		
-		// let response: any = {};
-		// let respBody: any = {};
-
-		// //const result = await request.get(options);
-		// const result = request.get(options)
-		// 				.then((body) => { respBody = body; response = JSON.parse(body); });
-
-
+		// The code you place here will be executed every time your command is executed		
 		let response: any = {};
+
+		var options = {
+			uri: "http://httpbin.org/ip",
+		};
+
 		// Here we go!
 		const result = await request.get("http://httpbin.org/ip")
-			.then((body) => { response = JSON.parse(body); })
-			.catch ((err) => { response = { "origin": err.toString() }; });
-		// Now that we have our response, pull out the origin and return it
-		// to the caller.
-		//return response.origin;
-
-
+		 	.then((body) => { response = JSON.parse(body); })
+		 	.catch ((err) => { response = { "origin": err.toString() }; });
+		
+		// Now that we have our response, pull out the origin and display it
 		// Display a message box to the user
 		vscode.window.showInformationMessage(response.origin);
 	});
 
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(disposable, disposable2);
 }
 
 // this method is called when your extension is deactivated
