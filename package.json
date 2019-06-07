@@ -11,7 +11,8 @@
   ],
   "activationEvents": [
     "onCommand:extension.helloWorld",
-    "onCommand:extension.make"
+    "onCommand:extension.make",
+    "onCommand:extension.exec"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -26,7 +27,12 @@
           "command": "extension.make",
           "group": "navigation",
           "when": "resourceLangId == markdown"
-        }        
+        },
+        {
+          "command": "extension.exec",
+          "group": "navigation",
+          "when": "resourceLangId == markdown"
+        }          
       ]
     },
     "commands": [
@@ -37,8 +43,23 @@
       {
         "command": "extension.make",
         "title": "Make Script"
-      }      
-    ]
+      },
+      {
+        "command": "extension.exec",
+        "title": "Exec Script"
+      }         
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Hostbridge configuration",
+      "properties": {
+        "hostbridge.host": {
+            "type": "string",
+            "default": "***REMOVED***",
+            "description": "Specifies the machine name or IP address of the host."
+        }
+      }
+    }    
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

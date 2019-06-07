@@ -39,10 +39,32 @@ export function activate(context: vscode.ExtensionContext) {
 		
 		// Now that we have our response, pull out the origin and display it
 		// Display a message box to the user
-		vscode.window.showInformationMessage(response.origin);
+		//vscode.window.showInformationMessage(response.origin);
+		vscode.window.showInformationMessage(vscode.workspace.getConfiguration('hostbridge').host);
 	});
 
-	context.subscriptions.push(disposable, disposable2);
+	// The command has been defined in the package.json file
+	// Now provide the implementation of the command with registerCommand
+	// The commandId parameter must match the command field in package.json
+	let disposable3 = vscode.commands.registerCommand('extension.exec', async () => {
+		// The code you place here will be executed every time your command is executed		
+		let response: any = {};
+
+		var options = {
+			uri: "http://httpbin.org/ip",
+		};
+
+		// Here we go!
+		const result = await request.get("http://httpbin.org/ip")
+		 	.then((body) => { response = JSON.parse(body); })
+		 	.catch ((err) => { response = { "origin": err.toString() }; });
+		
+		// Now that we have our response, pull out the origin and display it
+		// Display a message box to the user
+		vscode.window.showInformationMessage(response.origin);
+	});	
+
+	context.subscriptions.push(disposable, disposable2, disposable3);
 }
 
 // this method is called when your extension is deactivated
