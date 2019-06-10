@@ -24,16 +24,28 @@
       }
     ],
     "menus": {
-      "explorer/context": [
+      "editor/context": [
         {
           "command": "extension.make",
-          "group": "navigation",
-          "when": "resourceLangId == javascript"
+          "group": "yy_hostbridge",
+          "when": "resourceExtname == .hbx"
         },
         {
           "command": "extension.exec",
-          "group": "navigation",
-          "when": "resourceLangId == javascript"
+          "group": "yy_hostbridge",
+          "when": "resourceExtname == .hbx"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "extension.make",
+          "group": "yy_hostbridge",
+          "when": "resourceExtname == .hbx"
+        },
+        {
+          "command": "extension.exec",
+          "group": "yy_hostbridge",
+          "when": "resourceExtname == .hbx"
         }
       ]
     },

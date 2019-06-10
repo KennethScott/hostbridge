@@ -1,10 +1,9 @@
 import * as vscode from 'vscode';
 import * as request from 'request-promise-native';
 import * as fs from 'fs';
-import { stringify } from 'querystring';
+//import { stringify } from 'querystring';
 import { debug } from 'util';
 import { UriOptions } from 'request';
-import { OutputChannel } from 'vscode';
 
 
 class HostbridgeFile {
