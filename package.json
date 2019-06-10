@@ -10,36 +10,32 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:extension.helloWorld",
     "onCommand:extension.make",
     "onCommand:extension.exec"
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "languages": [
+      {
+        "id": "javascript",
+        "extensions": [ ".hbx" ]
+      }
+    ],    
     "menus": {
       "explorer/context": [
         {
-          "command": "extension.helloWorld",
-          "group": "navigation",
-          "when": "resourceLangId == markdown"
-        },
-        {
           "command": "extension.make",
           "group": "navigation",
-          "when": "resourceLangId == markdown"
+          "when": "resourceLangId == javascript"
         },
         {
           "command": "extension.exec",
           "group": "navigation",
-          "when": "resourceLangId == markdown"
+          "when": "resourceLangId == javascript"
         }          
       ]
     },
     "commands": [
-      {
-        "command": "extension.helloWorld",
-        "title": "Hello World"
-      },
       {
         "command": "extension.make",
         "title": "Make Script"
@@ -51,12 +47,28 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "Hostbridge configuration",
+      "title": "Hostbridge",
       "properties": {
         "hostbridge.host": {
             "type": "string",
             "default": "***REMOVED***",
             "description": "Specifies the machine name or IP address of the host."
+        },
+        "hostbridge.port": {
+          "type": "string",
+          "enum": [
+            "***REMOVED***",
+            "***REMOVED***"
+          ],
+          "default": [
+            "***REMOVED***"
+          ],
+          "description": "Specifies the port of the CICS region."
+        },
+        "hostbridge.userid": {
+          "type": "string",
+          "default": "***REMOVED***",
+          "description": "Specifies the CESN/RACF userid to login with."
         }
       }
     }    
