@@ -18,9 +18,11 @@
     "languages": [
       {
         "id": "javascript",
-        "extensions": [ ".hbx" ]
+        "extensions": [
+          ".hbx"
+        ]
       }
-    ],    
+    ],
     "menus": {
       "explorer/context": [
         {
@@ -32,7 +34,7 @@
           "command": "extension.exec",
           "group": "navigation",
           "when": "resourceLangId == javascript"
-        }          
+        }
       ]
     },
     "commands": [
@@ -43,16 +45,16 @@
       {
         "command": "extension.exec",
         "title": "Exec Script"
-      }         
+      }
     ],
     "configuration": {
       "type": "object",
       "title": "Hostbridge",
       "properties": {
         "hostbridge.host": {
-            "type": "string",
-            "default": "***REMOVED***",
-            "description": "Specifies the machine name or IP address of the host."
+          "type": "string",
+          "default": "***REMOVED***",
+          "description": "Specifies the machine name or IP address of the host."
         },
         "hostbridge.port": {
           "type": "string",
@@ -71,7 +73,7 @@
           "description": "Specifies the CESN/RACF userid to login with."
         }
       }
-    }    
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -81,13 +83,14 @@
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
-    "typescript": "^3.3.1",
-    "vscode": "^1.1.28",
-    "tslint": "^5.12.1",
+    "@types/mocha": "^2.2.42",
     "@types/node": "^10.12.21",
-    "@types/mocha": "^2.2.42"
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.1",
+    "vscode": "^1.1.34"
   },
   "dependencies": {
+    "@types/request-promise-native": "^1.0.16",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7"
   }
