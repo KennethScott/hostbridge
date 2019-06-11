@@ -5,13 +5,13 @@ import * as fs from 'fs';
 import { debug } from 'util';
 import { UriOptions } from 'request';
 
+class HostbridgeUtil {
+	public filename:string;
+	public folder:string;
+	public contents:string;
+	public options:UriOptions;
 
-class HostbridgeFile {
-	public filename: string;
-	public folder: string;
-	public contents: string;
-
-	constructor(uri: vscode.Uri) {
+	constructor(uri:vscode.Uri, action:string) {
 		let uriPieces = uri.fsPath.split("\\");
 		this.filename = uriPieces[uriPieces.length-1];
 		this.folder = uriPieces[uriPieces.length-2];	
@@ -20,20 +20,21 @@ class HostbridgeFile {
 		// 	fileContents = document.getText();
 		// });
 		this.contents = fs.readFileSync(uri.fsPath, 'utf-8');
+		this.options = this.getHttpOptions(action);
 	}
 
 	/// action = MAKE or RUN
 	getHttpOptions(action:string): UriOptions {
 
-		let config = vscode.workspace.getConfiguration('hostbridge');
-			
-		let x =  
-		{				
+		let config = vscode.workspace.getConfiguration('hostbridge');			
+
+		let x =
+		{							
 			method: 'POST',
 			uri: "https://" + config.host + ":" + config.port + "/" + this.folder + "/mscript",
 			//uri: "https://" + config.host + ":" + config.port + "/" + '***REMOVED***' + "/mscript",
 			headers: {
-				'Authorization': "Basic " + Buffer.from(config.userid + ':' + 'nowayjose').toString('base64'),
+				'Authorization': "Basic " + Buffer.from(config.userid + ':' + _password).toString('base64'),
 				'X-HB-ACTION': action,
 				'X-HB-ACTION-TARGET': this.filename,
 				'X-HB-TRANSLATE': 'text',
@@ -50,13 +51,27 @@ class HostbridgeFile {
 
 
 let _channel: vscode.OutputChannel;
-function getOutputChannel(): vscode.OutputChannel {
+export function getOutputChannel(): vscode.OutputChannel {
 	if (!_channel) {
 		_channel = vscode.window.createOutputChannel('Hostbridge');
 	}
 	return _channel;
 }
 
+
+let _password: string | undefined;
+export async function getPassword() {
+	if (!_password) {
+		_password = await vscode.window.showInputBox({
+			password: true,
+			prompt: "Please enter your CESN/RACF password.",	
+			validateInput: text => {
+				return text.length === 0 ? 'Password is required!' : null;
+			},
+		});
+	}
+	return _password;
+}
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -73,36 +88,39 @@ export function activate(context: vscode.ExtensionContext) {
 	
 		let response: any = {};
 
-		let hbFile = new HostbridgeFile(uri);
-		
-		//#region MAKE Headers 
-		// POST /***REMOVED***/mscript HTTP/1.1
-		// X-HB-ACTION: MAKE
-		// X-HB-ACTION-TARGET: Test3.hbx
-		// X-HB-PLUGIN-VERSION: 201702011429
-		// X-HB-DEFAULT-REPOSITORY: ***REMOVED***
-		// Authorization: Basic ---
-		// Content-type: text/plain
-		// X-HB-TRANSLATE: text
-		// Cache-Control: no-cache
-		// Pragma: no-cache
-		// User-Agent: Java/1.8.0_201
-		// Host: ***REMOVED***:***REMOVED***
-		// Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
-		// Connection: keep-alive
-		// Content-Length: 994
-		//#endregion
+		await getPassword();	
 
-		let options = hbFile.getHttpOptions("MAKE");
+		if (_password) {
 
-		const result = await request.post(options)
-		 	.then((body) => { response = body; })
-		 	.catch ((err) => { response = err; });
-		
-		console.log(response);
-		//vscode.window.showInformationMessage(response);
-		getOutputChannel().appendLine(response);
-		getOutputChannel().show(true);		
+			let hbUtil = new HostbridgeUtil(uri, "MAKE");
+			
+			//#region MAKE Headers 
+			// POST /***REMOVED***/mscript HTTP/1.1
+			// X-HB-ACTION: MAKE
+			// X-HB-ACTION-TARGET: Test3.hbx
+			// X-HB-PLUGIN-VERSION: 201702011429
+			// X-HB-DEFAULT-REPOSITORY: ***REMOVED***
+			// Authorization: Basic ---
+			// Content-type: text/plain
+			// X-HB-TRANSLATE: text
+			// Cache-Control: no-cache
+			// Pragma: no-cache
+			// User-Agent: Java/1.8.0_201
+			// Host: ***REMOVED***:***REMOVED***
+			// Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+			// Connection: keep-alive
+			// Content-Length: 994
+			//#endregion
+
+			const result = await request.post(hbUtil.options)
+				.then((body) => { response = body; })
+				.catch ((err) => { response = err; });
+			
+			console.log(response);
+			//vscode.window.showInformationMessage(response);
+			getOutputChannel().appendLine(response);
+			getOutputChannel().show(true);		
+		}
 	});
 
 	// The command has been defined in the package.json file
@@ -112,36 +130,39 @@ export function activate(context: vscode.ExtensionContext) {
 
 		let response: any = {};
 
-		let hbFile = new HostbridgeFile(uri);
+		await getPassword();		
 
-		//#region RUN (Exec) Headers 
-		// POST /***REMOVED***/mscript HTTP/1.1
-		// X-HB-ACTION: RUN
-		// X-HB-ACTION-TARGET: Test3.hbx
-		// X-HB-PLUGIN-VERSION: 201702011429
-		// X-HB-DEFAULT-REPOSITORY: ***REMOVED***
-		// Authorization: Basic ---
-		// Content-type: text/plain
-		// X-HB-TRANSLATE: text
-		// Cache-Control: no-cache
-		// Pragma: no-cache
-		// User-Agent: Java/1.8.0_201
-		// Host: ***REMOVED***:***REMOVED***
-		// Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
-		// Connection: keep-alive
-		// Content-Length: 979
-		//#endregion
+		if (_password) {
 
-		let options = hbFile.getHttpOptions("RUN");
+			let hbUtil = new HostbridgeUtil(uri, "RUN");
 
-		const result = await request.post(options)
-		 	.then((body) => { response = body; })
-		 	.catch ((err) => { response = err; });
-		
-		console.log(response);		
-		//vscode.window.showInformationMessage(response);
-		getOutputChannel().appendLine(response);
-		getOutputChannel().show(true);
+			//#region RUN (Exec) Headers 
+			// POST /***REMOVED***/mscript HTTP/1.1
+			// X-HB-ACTION: RUN
+			// X-HB-ACTION-TARGET: Test3.hbx
+			// X-HB-PLUGIN-VERSION: 201702011429
+			// X-HB-DEFAULT-REPOSITORY: ***REMOVED***
+			// Authorization: Basic ---
+			// Content-type: text/plain
+			// X-HB-TRANSLATE: text
+			// Cache-Control: no-cache
+			// Pragma: no-cache
+			// User-Agent: Java/1.8.0_201
+			// Host: ***REMOVED***:***REMOVED***
+			// Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+			// Connection: keep-alive
+			// Content-Length: 979
+			//#endregion
+
+			const result = await request.post(hbUtil.options)
+				.then((body) => { response = body; })
+				.catch ((err) => { response = err; });
+			
+			console.log(response);		
+			//vscode.window.showInformationMessage(response);
+			getOutputChannel().appendLine(response);
+			getOutputChannel().show(true);
+		}
 	});	
 
 	context.subscriptions.push(disposableMake, disposableExec);
