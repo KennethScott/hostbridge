@@ -4,6 +4,7 @@ import * as fs from 'fs';
 //import { stringify } from 'querystring';
 import { debug } from 'util';
 import { UriOptions } from 'request';
+import { QuickPickItem } from 'vscode';
 
 class HostbridgeUtil {
 	public filename:string;
@@ -28,13 +29,13 @@ class HostbridgeUtil {
 
 		let config = vscode.workspace.getConfiguration('hostbridge');			
 
-		let x =
+		let options =
 		{							
 			method: 'POST',
-			uri: "https://" + config.host + ":" + config.port + "/" + this.folder + "/mscript",
+			uri: "https://" + config.host + ":" + config.currentRegion.port + "/" + this.folder + "/mscript",
 			//uri: "https://" + config.host + ":" + config.port + "/" + '***REMOVED***' + "/mscript",
 			headers: {
-				'Authorization': "Basic " + Buffer.from(config.userid + ':' + _password).toString('base64'),
+				'Authorization': "Basic " + Buffer.from(config.userid + ':' + password).toString('base64'),
 				'X-HB-ACTION': action,
 				'X-HB-ACTION-TARGET': this.filename,
 				'X-HB-TRANSLATE': 'text',
@@ -45,7 +46,7 @@ class HostbridgeUtil {
 			body: this.contents
 		};
 
-		return x;
+		return options;
 	}		
 }
 
@@ -59,10 +60,10 @@ export function getOutputChannel(): vscode.OutputChannel {
 }
 
 
-let _password: string | undefined;
+let password: string | undefined;
 export async function getPassword() {
-	if (!_password) {
-		_password = await vscode.window.showInputBox({
+	if (!password) {
+		password = await vscode.window.showInputBox({
 			password: true,
 			prompt: "Please enter your CESN/RACF password.",	
 			validateInput: text => {
@@ -70,27 +71,49 @@ export async function getPassword() {
 			},
 		});
 	}
-	return _password;
+	return password;
 }
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {	
+let statusbarRegion: vscode.StatusBarItem;
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
+export function activate({ subscriptions }: vscode.ExtensionContext) {	
+
 	console.log('Hostbridge extension active.');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposableMake = vscode.commands.registerCommand('extension.make', async (uri:vscode.Uri) => {
+	subscriptions.push(vscode.commands.registerCommand('extension.updateCurrentRegion', async () => {
+		
+		let regions:QuickPickItem[] = [];
+		vscode.workspace.getConfiguration('hostbridge').regions.forEach((r:any) => {
+			regions.push({ label: r.name.toString(), description: r.port.toString() });
+		});
+		
+		vscode.window.showQuickPick(regions, { placeHolder: 'Select the desired CICS region.' })
+			.then((selection:any) => {
+				if (!selection) {
+					return;
+				}
+				vscode.workspace.getConfiguration().update('hostbridge.currentRegion', { name: selection.label, port: +selection.description }, vscode.ConfigurationTarget.Global);
+				statusbarRegion.text = selection.label;
+			});		
+
+	}));
+
+	// create a new status bar item that we can now manage
+	statusbarRegion = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	statusbarRegion.command = 'extension.updateCurrentRegion';
+	let currentRegion = vscode.workspace.getConfiguration('hostbridge').currentRegion as any;
+	statusbarRegion.text = (!currentRegion) ? "SET REGION" : currentRegion.name;
+	statusbarRegion.show();
+	subscriptions.push(statusbarRegion);
+
+
+	subscriptions.push(vscode.commands.registerCommand('extension.make', async (uri:vscode.Uri) => {
 	
 		let response: any = {};
 
 		await getPassword();	
 
-		if (_password) {
+		if (password) {
 
 			let hbUtil = new HostbridgeUtil(uri, "MAKE");
 			
@@ -121,18 +144,18 @@ export function activate(context: vscode.ExtensionContext) {
 			getOutputChannel().appendLine(response);
 			getOutputChannel().show(true);		
 		}
-	});
+	}));
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposableExec = vscode.commands.registerCommand('extension.exec', async (uri:vscode.Uri) => {
+
+	subscriptions.push( vscode.commands.registerCommand('extension.exec', async (uri:vscode.Uri) => {
+
+		//await updateCurrentRegion();
 
 		let response: any = {};
 
 		await getPassword();		
 
-		if (_password) {
+		if (password) {
 
 			let hbUtil = new HostbridgeUtil(uri, "RUN");
 
@@ -163,9 +186,8 @@ export function activate(context: vscode.ExtensionContext) {
 			getOutputChannel().appendLine(response);
 			getOutputChannel().show(true);
 		}
-	});	
+	}));	
 
-	context.subscriptions.push(disposableMake, disposableExec);
 }
 
 // this method is called when your extension is deactivated

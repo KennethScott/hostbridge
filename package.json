@@ -10,8 +10,10 @@
     "Other"
   ],
   "activationEvents": [
+    "*",
     "onCommand:extension.make",
-    "onCommand:extension.exec"
+    "onCommand:extension.exec",
+    "onCommand:extension.updateCurrentRegion"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -57,6 +59,10 @@
       {
         "command": "extension.exec",
         "title": "Exec Script"
+      },
+      {
+        "command": "extension.updateCurrentRegion",
+        "title": "CICS Region"
       }
     ],
     "configuration": {
@@ -68,21 +74,43 @@
           "default": "***REMOVED***",
           "description": "Specifies the machine name or IP address of the host."
         },
-        "hostbridge.port": {
-          "type": "string",
-          "enum": [
-            "***REMOVED***",
-            "***REMOVED***"
-          ],
-          "default": [
-            "***REMOVED***"
-          ],
-          "description": "Specifies the port of the CICS region."
-        },
         "hostbridge.userid": {
           "type": "string",
           "default": "***REMOVED***",
           "description": "Specifies the CESN/RACF userid to login with."
+        },
+        "hostbridge.regions": {
+          "type": "array",
+          "description": "All available CICS Regions.",
+          "items": {
+            "type": "object",
+            "title": "CICS Region",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "CICS Region Name"
+              },
+              "port": {
+                "type": "number",
+                "description": "CICS Region Port#"
+              }
+            }
+          }
+        },
+        "hostbridge.currentRegion": {
+          "type": "object",
+          "description": "Specifies the current CICS Region.",
+          "title": "Current CICS Region",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "CICS Region Name"
+            },
+            "port": {
+              "type": "number",
+              "description": "CICS Region Port#"
+            }
+          }
         }
       }
     }
@@ -97,7 +125,7 @@
   "devDependencies": {
     "@types/mocha": "^2.2.42",
     "@types/node": "^10.12.21",
-    "tslint": "^5.12.1",
+    "tslint": "^5.17.0",
     "typescript": "^3.3.1",
     "vscode": "^1.1.34"
   },
