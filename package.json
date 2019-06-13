@@ -14,7 +14,7 @@
     "onCommand:extension.make",
     "onCommand:extension.exec",
     "onCommand:extension.updateCurrentRegion",
-    "onCommand:extension.updateCurrentRepository",
+    "onCommand:extension.updateCurrentRepository"
   ],
   "main": "./out/extension.js",
   "contributes": {

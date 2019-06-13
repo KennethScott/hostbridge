@@ -4,7 +4,6 @@ import { UriOptions } from 'request';
 import { QuickPickItem } from 'vscode';
 import { getOutputChannel, getHttpOptions } from "./utils";
 import { FileParser } from "./fileParser";
-import { MemFS } from './fileSystemProvider';
 import { statusbarRegion, statusbarRepository, setupStatusBarItems, updateStatusBarItems } from "./statusBarHelper";
 
 
