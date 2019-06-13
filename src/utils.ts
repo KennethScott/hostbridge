@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { FileParser } from "./fileParser";
 import { UriOptions } from 'request';
 
 let _channel: vscode.OutputChannel;

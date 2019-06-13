@@ -2,7 +2,7 @@
   "name": "hostbridge",
   "displayName": "Hostbridge",
   "description": "Adds a GUI for retrieving, uploading, and compiling hostbridge scripts",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.34.0"
   },
@@ -15,10 +15,6 @@
     "onCommand:extension.exec",
     "onCommand:extension.updateCurrentRegion",
     "onCommand:extension.updateCurrentRepository",
-    "onFileSystem:memfs",
-		"onCommand:memfs.workspaceInit",
-		"onCommand:memfs.init",
-		"onCommand:memfs.reset"    
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -31,20 +27,6 @@
       }
     ],
     "menus": {
-      "commandPalette": [
-				{
-					"command": "memfs.init",
-					"when": "workbenchState == workspace"
-				},
-				{
-					"command": "memfs.reset",
-					"when": "workbenchState == workspace"
-				},
-				{
-					"command": "memfs.workspaceInit",
-					"when": "workbenchState != workspace"
-        }
-      ],      
       "editor/context": [
         {
           "command": "extension.make",
@@ -86,22 +68,7 @@
       {
         "command": "extension.updateCurrentRepository",
         "title": "Repository"
-      },
-			{
-				"command": "memfs.workspaceInit",
-				"title": "Setup Workspace",
-				"category": "MemFS"
-			},
-			{
-				"command": "memfs.init",
-				"title": "Create Files",
-				"category": "MemFS"
-      },
-      {
-				"command": "memfs.reset",
-				"title": "Delete Files",
-				"category": "MemFS"
-      }      
+      }    
     ],
     "configuration": {
       "type": "object",
