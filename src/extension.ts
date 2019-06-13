@@ -3,36 +3,12 @@ import * as request from 'request-promise-native';
 import { debug } from 'util';
 import { UriOptions } from 'request';
 import { QuickPickItem } from 'vscode';
-import { getOutputChannel } from "./utils";
+import { getOutputChannel, getHttpOptions } from "./utils";
 import { FileParser } from "./fileParser";
+import { statusbarRegion, statusbarRepository, setupStatusBarItems, updateStatusBarItems } from "./statusBarHelper";
 
 
-/// action = MAKE or RUN
-export function getHttpOptions(hbFile:FileParser, action:string): UriOptions {
-
-	let config = vscode.workspace.getConfiguration('hostbridge');			
-
-	let options =
-	{							
-		method: 'POST',
-		uri: `https://${config.host}:${config.currentRegion.port}/${config.currentRepository.name}/mscript`,
-		headers: {
-			'Authorization': "Basic " + Buffer.from(`${config.userid}:${password}`).toString('base64'),
-			'X-HB-ACTION': action,
-			'X-HB-ACTION-TARGET': hbFile.filename,
-			'X-HB-TRANSLATE': 'text',
-			'Content-Type': 'text/plain',
-			'Cache-Control': 'no-cache',
-			'Pragma': 'no-cache'				
-		},
-		body: hbFile.contents
-	};
-
-	return options;
-}		
-
-
-let password: string | undefined;
+let password: string|undefined;
 export async function getPassword() {
 	if (!password) {
 		password = await vscode.window.showInputBox({
@@ -46,43 +22,10 @@ export async function getPassword() {
 	return password;
 }
 
-let statusbarRegion: vscode.StatusBarItem;
-let statusbarRepository: vscode.StatusBarItem;
-
-export function setupStatusBarItems(subscriptions:any) {
-	statusbarRegion = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-	statusbarRegion.command = 'extension.updateCurrentRegion';
-	let currentRegion = vscode.workspace.getConfiguration('hostbridge').currentRegion as any;
-	statusbarRegion.text = (!currentRegion) ? "SET REGION" : currentRegion.name;
-	subscriptions.push(statusbarRegion);
-
-	statusbarRepository = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-	statusbarRepository.command = 'extension.updateCurrentRepository';
-	let currentRepository = vscode.workspace.getConfiguration('hostbridge').currentRepository as any;
-	statusbarRepository.text = (!currentRepository) ? "SET REPOSITORY" : currentRepository.name;
-	subscriptions.push(statusbarRepository);
-}
-
-export function updateStatusBarItems() {
-	let editor:vscode.TextEditor|undefined = vscode.window.activeTextEditor;
-	if (editor) {
-		if (editor.document.fileName.toLowerCase().endsWith('.hbx')) {
-			let uriPieces = editor.document.uri.fsPath.split("\\");
-			statusbarRepository.text = uriPieces[uriPieces.length-2];			
-			statusbarRegion.show();
-			statusbarRepository.show();
-		}
-		else {
-			statusbarRegion.hide();
-			statusbarRepository.hide();
-		}
-	}	
-}
 
 export function activate({ subscriptions }: vscode.ExtensionContext) {	
 
 	console.log('Hostbridge extension active.');
-	//vscode.window.showInformationMessage(`1 and 1 make ${1 + 1}`);
 
 	setupStatusBarItems(subscriptions);
 	updateStatusBarItems();
@@ -134,7 +77,7 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 		if (password) {
 
 			let hbFile = new FileParser(uri);
-			let options:UriOptions = getHttpOptions(hbFile, "MAKE");
+			let options:UriOptions = getHttpOptions("MAKE", password, hbFile.filename, hbFile.contents);
 			
 			//#region MAKE Headers 
 			// POST /***REMOVED***/mscript HTTP/1.1
@@ -159,7 +102,6 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 				.catch ((err) => { response = err; })
 				.finally(() => {
 					console.log(response);		
-					//vscode.window.showInformationMessage(response);
 					getOutputChannel().appendLine(response);
 					getOutputChannel().show(true);
 				});					
@@ -177,7 +119,7 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 		if (password) {
 
 			let hbFile = new FileParser(uri);
-			let options:UriOptions = getHttpOptions(hbFile, "RUN");
+			let options:UriOptions = getHttpOptions("RUN", password, hbFile.filename, hbFile.contents);
 
 			//#region RUN (Exec) Headers 
 			// POST /***REMOVED***/mscript HTTP/1.1
@@ -202,7 +144,6 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 				.catch ((err) => { response = err; })
 				.finally(() => {
 					console.log(response);		
-					//vscode.window.showInformationMessage(response);
 					getOutputChannel().appendLine(response);
 					getOutputChannel().show(true);
 				});			
@@ -221,3 +162,59 @@ export function deactivate() {}
 
 // to call a function when config changes are made:
 //workspace.onDidChangeConfiguration(() => myupdatefunction());
+
+// show output example
+//vscode.window.showInformationMessage(response);
+
+
+//#region get repository listing
+//POST https://***REMOVED***:***REMOVED***/***REMOVED***/mscript HTTP/1.1
+//X-HB-ACTION: LIST2
+//X-HB-ACTION-TARGET: *
+//X-HB-PLUGIN-VERSION: 201702011429
+//X-HB-DEFAULT-REPOSITORY: ***REMOVED***
+//Authorization: Basic ===
+//X-HB-TRANSLATE: text
+//Cache-Control: no-cache
+//Pragma: no-cache
+//User-Agent: Java/1.8.0_201
+//Host: ***REMOVED***:***REMOVED***
+//Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+//Connection: keep-alive
+//Content-type: application/x-www-form-urlencoded
+//Content-Length: 56
+//#endregion
+
+
+//#region delete script
+//DELETE https://***REMOVED***:***REMOVED***/***REMOVED***/Test3 HTTP/1.1
+//X-HB-ACTION: DELETE
+//X-HB-ACTION-TARGET: Test3
+//X-HB-PLUGIN-VERSION: 201702011429
+//X-HB-DEFAULT-REPOSITORY: ***REMOVED***
+//Authorization: Basic ===
+//Cache-Control: no-cache
+//Pragma: no-cache
+//User-Agent: Java/1.8.0_201
+//Host: ***REMOVED***:***REMOVED***
+//Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+//Connection: keep-alive
+//#endregion
+
+//#region get script
+//POST https://***REMOVED***:***REMOVED***/***REMOVED***/mscript HTTP/1.1
+//X-HB-ACTION: GET
+//X-HB-ACTION-TARGET: CdoDepCesaInq
+//X-HB-PLUGIN-VERSION: 201702011429
+//X-HB-DEFAULT-REPOSITORY: ***REMOVED***
+//Authorization: Basic ===
+//X-HB-TRANSLATE: text
+//Cache-Control: no-cache
+//Pragma: no-cache
+//User-Agent: Java/1.8.0_201
+//Host: ***REMOVED***:***REMOVED***
+//Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+//Connection: keep-alive
+//Content-type: application/x-www-form-urlencoded
+//Content-Length: 54
+//#endregion
