@@ -9,11 +9,12 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "*",
+  "activationEvents": [    
+    "onLanguage:javascript",
     "onCommand:extension.make",
     "onCommand:extension.exec",
-    "onCommand:extension.updateCurrentRegion"
+    "onCommand:extension.updateCurrentRegion",
+    "onCommand:extension.updateCurrentRepository"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -63,6 +64,10 @@
       {
         "command": "extension.updateCurrentRegion",
         "title": "CICS Region"
+      },
+      {
+        "command": "extension.updateCurrentRepository",
+        "title": "Repository"
       }
     ],
     "configuration": {
@@ -111,7 +116,32 @@
               "description": "CICS Region Port#"
             }
           }
-        }
+        },
+        "hostbridge.repositories": {
+          "type": "array",
+          "description": "All available repositories.",
+          "items": {
+            "type": "object",
+            "title": "Repository",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Repository Name"
+              }
+            }
+          }
+        },        
+        "hostbridge.currentRepository": {
+          "type": "object",
+          "description": "Specifies the current repository.",
+          "title": "Current Repository",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Repository Name"
+            }
+          }
+        }    
       }
     }
   },

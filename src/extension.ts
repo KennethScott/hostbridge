@@ -1,63 +1,35 @@
 import * as vscode from 'vscode';
 import * as request from 'request-promise-native';
-import * as fs from 'fs';
-//import { stringify } from 'querystring';
 import { debug } from 'util';
 import { UriOptions } from 'request';
 import { QuickPickItem } from 'vscode';
-
-class HostbridgeUtil {
-	public filename:string;
-	public folder:string;
-	public contents:string;
-	public options:UriOptions;
-
-	constructor(uri:vscode.Uri, action:string) {
-		let uriPieces = uri.fsPath.split("\\");
-		this.filename = uriPieces[uriPieces.length-1];
-		this.folder = uriPieces[uriPieces.length-2];	
-		// no idea why this doesn't seem to work..
-		// vscode.workspace.openTextDocument(uri).then((document) => {
-		// 	fileContents = document.getText();
-		// });
-		this.contents = fs.readFileSync(uri.fsPath, 'utf-8');
-		this.options = this.getHttpOptions(action);
-	}
-
-	/// action = MAKE or RUN
-	getHttpOptions(action:string): UriOptions {
-
-		let config = vscode.workspace.getConfiguration('hostbridge');			
-
-		let options =
-		{							
-			method: 'POST',
-			uri: "https://" + config.host + ":" + config.currentRegion.port + "/" + this.folder + "/mscript",
-			//uri: "https://" + config.host + ":" + config.port + "/" + '***REMOVED***' + "/mscript",
-			headers: {
-				'Authorization': "Basic " + Buffer.from(config.userid + ':' + password).toString('base64'),
-				'X-HB-ACTION': action,
-				'X-HB-ACTION-TARGET': this.filename,
-				'X-HB-TRANSLATE': 'text',
-				'Content-Type': 'text/plain',
-				'Cache-Control': 'no-cache',
-				'Pragma': 'no-cache'				
-			},
-			body: this.contents
-		};
-
-		return options;
-	}		
-}
+import { getOutputChannel } from "./utils";
+import { FileParser } from "./fileParser";
 
 
-let _channel: vscode.OutputChannel;
-export function getOutputChannel(): vscode.OutputChannel {
-	if (!_channel) {
-		_channel = vscode.window.createOutputChannel('Hostbridge');
-	}
-	return _channel;
-}
+/// action = MAKE or RUN
+export function getHttpOptions(hbFile:FileParser, action:string): UriOptions {
+
+	let config = vscode.workspace.getConfiguration('hostbridge');			
+
+	let options =
+	{							
+		method: 'POST',
+		uri: `https://${config.host}:${config.currentRegion.port}/${config.currentRepository.name}/mscript`,
+		headers: {
+			'Authorization': "Basic " + Buffer.from(`${config.userid}:${password}`).toString('base64'),
+			'X-HB-ACTION': action,
+			'X-HB-ACTION-TARGET': hbFile.filename,
+			'X-HB-TRANSLATE': 'text',
+			'Content-Type': 'text/plain',
+			'Cache-Control': 'no-cache',
+			'Pragma': 'no-cache'				
+		},
+		body: hbFile.contents
+	};
+
+	return options;
+}		
 
 
 let password: string | undefined;
@@ -75,18 +47,54 @@ export async function getPassword() {
 }
 
 let statusbarRegion: vscode.StatusBarItem;
+let statusbarRepository: vscode.StatusBarItem;
+
+export function setupStatusBarItems(subscriptions:any) {
+	statusbarRegion = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	statusbarRegion.command = 'extension.updateCurrentRegion';
+	let currentRegion = vscode.workspace.getConfiguration('hostbridge').currentRegion as any;
+	statusbarRegion.text = (!currentRegion) ? "SET REGION" : currentRegion.name;
+	subscriptions.push(statusbarRegion);
+
+	statusbarRepository = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	statusbarRepository.command = 'extension.updateCurrentRepository';
+	let currentRepository = vscode.workspace.getConfiguration('hostbridge').currentRepository as any;
+	statusbarRepository.text = (!currentRepository) ? "SET REPOSITORY" : currentRepository.name;
+	subscriptions.push(statusbarRepository);
+}
+
+export function updateStatusBarItems() {
+	let editor:vscode.TextEditor|undefined = vscode.window.activeTextEditor;
+	if (editor) {
+		if (editor.document.fileName.toLowerCase().endsWith('.hbx')) {
+			let uriPieces = editor.document.uri.fsPath.split("\\");
+			statusbarRepository.text = uriPieces[uriPieces.length-2];			
+			statusbarRegion.show();
+			statusbarRepository.show();
+		}
+		else {
+			statusbarRegion.hide();
+			statusbarRepository.hide();
+		}
+	}	
+}
 
 export function activate({ subscriptions }: vscode.ExtensionContext) {	
 
 	console.log('Hostbridge extension active.');
+	//vscode.window.showInformationMessage(`1 and 1 make ${1 + 1}`);
 
-	subscriptions.push(vscode.commands.registerCommand('extension.updateCurrentRegion', async () => {
+	setupStatusBarItems(subscriptions);
+	updateStatusBarItems();
+
+	subscriptions.push(vscode.commands.registerCommand('extension.updateCurrentRegion', () => {
 		
 		let regions:QuickPickItem[] = [];
 		vscode.workspace.getConfiguration('hostbridge').regions.forEach((r:any) => {
 			regions.push({ label: r.name.toString(), description: r.port.toString() });
 		});
-		
+		regions.sort((a:QuickPickItem,b:QuickPickItem) => a.label.localeCompare(b.label)); 
+
 		vscode.window.showQuickPick(regions, { placeHolder: 'Select the desired CICS region.' })
 			.then((selection:any) => {
 				if (!selection) {
@@ -98,14 +106,24 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 
 	}));
 
-	// create a new status bar item that we can now manage
-	statusbarRegion = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-	statusbarRegion.command = 'extension.updateCurrentRegion';
-	let currentRegion = vscode.workspace.getConfiguration('hostbridge').currentRegion as any;
-	statusbarRegion.text = (!currentRegion) ? "SET REGION" : currentRegion.name;
-	statusbarRegion.show();
-	subscriptions.push(statusbarRegion);
+	subscriptions.push(vscode.commands.registerCommand('extension.updateCurrentRepository', () => {
+		
+		let repositories:QuickPickItem[] = [];
+		vscode.workspace.getConfiguration('hostbridge').repositories.forEach((r:any) => {
+			repositories.push({ label: r.name.toString() });
+		});
+		repositories.sort((a:QuickPickItem,b:QuickPickItem) => a.label.localeCompare(b.label)); 
 
+		vscode.window.showQuickPick(repositories, { placeHolder: 'Select the desired repository.' })
+			.then((selection:any) => {
+				if (!selection) {
+					return;
+				}
+				vscode.workspace.getConfiguration().update('hostbridge.currentRepository', { name: selection.label }, vscode.ConfigurationTarget.Global);
+				statusbarRepository.text = selection.label;
+			});		
+
+	}));
 
 	subscriptions.push(vscode.commands.registerCommand('extension.make', async (uri:vscode.Uri) => {
 	
@@ -115,7 +133,8 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 
 		if (password) {
 
-			let hbUtil = new HostbridgeUtil(uri, "MAKE");
+			let hbFile = new FileParser(uri);
+			let options:UriOptions = getHttpOptions(hbFile, "MAKE");
 			
 			//#region MAKE Headers 
 			// POST /***REMOVED***/mscript HTTP/1.1
@@ -135,21 +154,21 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 			// Content-Length: 994
 			//#endregion
 
-			const result = await request.post(hbUtil.options)
+			const result = await request.post(options)
 				.then((body) => { response = body; })
-				.catch ((err) => { response = err; });
-			
-			console.log(response);
-			//vscode.window.showInformationMessage(response);
-			getOutputChannel().appendLine(response);
-			getOutputChannel().show(true);		
+				.catch ((err) => { response = err; })
+				.finally(() => {
+					console.log(response);		
+					//vscode.window.showInformationMessage(response);
+					getOutputChannel().appendLine(response);
+					getOutputChannel().show(true);
+				});					
+
 		}
+
 	}));
 
-
-	subscriptions.push( vscode.commands.registerCommand('extension.exec', async (uri:vscode.Uri) => {
-
-		//await updateCurrentRegion();
+	subscriptions.push(vscode.commands.registerCommand('extension.exec', async (uri:vscode.Uri) => {
 
 		let response: any = {};
 
@@ -157,7 +176,8 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 
 		if (password) {
 
-			let hbUtil = new HostbridgeUtil(uri, "RUN");
+			let hbFile = new FileParser(uri);
+			let options:UriOptions = getHttpOptions(hbFile, "RUN");
 
 			//#region RUN (Exec) Headers 
 			// POST /***REMOVED***/mscript HTTP/1.1
@@ -177,18 +197,27 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 			// Content-Length: 979
 			//#endregion
 
-			const result = await request.post(hbUtil.options)
+			const result = await request.post(options)
 				.then((body) => { response = body; })
-				.catch ((err) => { response = err; });
-			
-			console.log(response);		
-			//vscode.window.showInformationMessage(response);
-			getOutputChannel().appendLine(response);
-			getOutputChannel().show(true);
+				.catch ((err) => { response = err; })
+				.finally(() => {
+					console.log(response);		
+					//vscode.window.showInformationMessage(response);
+					getOutputChannel().appendLine(response);
+					getOutputChannel().show(true);
+				});			
 		}
+
 	}));	
+
+	subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
+		updateStatusBarItems();
+	}));
 
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() {}
+
+
+// to call a function when config changes are made:
+//workspace.onDidChangeConfiguration(() => myupdatefunction());
