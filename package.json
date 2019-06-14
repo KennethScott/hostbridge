@@ -3,6 +3,7 @@
   "displayName": "Hostbridge",
   "description": "Adds a GUI for retrieving, uploading, and compiling hostbridge scripts",
   "version": "0.1.0",
+  "enableProposedApi": true,
   "engines": {
     "vscode": "^1.34.0"
   },
@@ -14,10 +15,19 @@
     "onCommand:extension.make",
     "onCommand:extension.exec",
     "onCommand:extension.updateCurrentRegion",
-    "onCommand:extension.updateCurrentRepository"
+    "onCommand:extension.updateCurrentRepository",
+    "onView:hostView"
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "views": {
+      "explorer": [
+				{
+					"id": "hostView",
+					"name": "Host View"
+				}
+			]      
+    },    
     "languages": [
       {
         "id": "javascript",
@@ -68,7 +78,11 @@
       {
         "command": "extension.updateCurrentRepository",
         "title": "Repository"
-      }    
+      },
+			{
+				"command": "hostView.reveal",
+				"title": "Host View: Reveal"
+			}
     ],
     "configuration": {
       "type": "object",

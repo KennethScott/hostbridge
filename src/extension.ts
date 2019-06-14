@@ -5,7 +5,7 @@ import { QuickPickItem } from 'vscode';
 import { getOutputChannel, getHttpOptions } from "./utils";
 import { FileParser } from "./fileParser";
 import { statusbarRegion, statusbarRepository, setupStatusBarItems, updateStatusBarItems } from "./statusBarHelper";
-
+import { TreeDataProvider, TreeItem } from './hostView';
 
 let password: string|undefined;
 export async function getPassword() {
@@ -149,6 +149,8 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 		}
 
 	}));	
+
+	vscode.window.registerTreeDataProvider('hostView', new TreeDataProvider());	
 
 }
 
