@@ -10,6 +10,21 @@ export function getOutputChannel(): vscode.OutputChannel {
 }
 
 
+export let password: string|undefined;
+export async function getPassword() {
+	if (!password) {
+		password = await vscode.window.showInputBox({
+			password: true,
+			prompt: "Please enter your CESN/RACF password.",	
+			validateInput: text => {
+				return text.length === 0 ? 'Password is required!' : null;
+			},
+		});
+	}
+	return password;
+}
+
+
 let HbActionsToMethods:any = {
 	'RUN': 'POST',
 	'EXEC': 'POST',
@@ -19,29 +34,30 @@ let HbActionsToMethods:any = {
 };
 
 /// action = MAKE or RUN
-export function getHttpOptions(action:string, password:string, filename:string, filecontents:string|undefined = undefined): UriOptions {
+export function getHttpOptions(o:any): UriOptions {
 
 	let config = vscode.workspace.getConfiguration('hostbridge');			
 
-	let method:any = HbActionsToMethods[action];
+	let method:any = HbActionsToMethods[o.action];
 
 	let options:any =
 	{							
-		method: method,
-		uri: `https://${config.host}:${config.currentRegion.port}/${config.currentRepository.name}/mscript`,
+		method: o.method,
+		//uri: `https://${config.host}:${config.currentRegion.port}/${config.currentRepository.name}/mscript`,
+		uri: `https://${config.host}:${o.port}/${o.repository}/mscript`,
 		headers: {
 			'Authorization': "Basic " + Buffer.from(`${config.userid}:${password}`).toString('base64'),
-			'X-HB-ACTION': action,
-			'X-HB-ACTION-TARGET': filename,
+			'X-HB-ACTION': o.action,
+			'X-HB-ACTION-TARGET': o.filename,
 			'X-HB-TRANSLATE': 'text',
-			'Content-Type': (method === 'POST') ? 'text/plain' : 'application/x-www-form-urlencoded',
+			'Content-Type': (o.method === 'POST') ? 'text/plain' : 'application/x-www-form-urlencoded',
 			'Cache-Control': 'no-cache',
 			'Pragma': 'no-cache'				
 		}
 	};
 
-	if (filecontents) {
-		options.body = filecontents;
+	if (o.filecontents) {
+		options.body = o.filecontents;
 	}
 
 	return options;

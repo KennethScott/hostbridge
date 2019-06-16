@@ -2,25 +2,12 @@ import * as vscode from 'vscode';
 import * as request from 'request-promise-native';
 import { UriOptions } from 'request';
 import { QuickPickItem } from 'vscode';
-import { getOutputChannel, getHttpOptions } from "./utils";
+import { password, getPassword, getOutputChannel, getHttpOptions } from "./utils";
 import { FileParser } from "./fileParser";
 import { statusbarRegion, statusbarRepository, setupStatusBarItems, updateStatusBarItems } from "./statusBarHelper";
 import { TreeDataProvider, TreeItem } from './hostView';
 
-let password: string|undefined;
-export async function getPassword() {
-	if (!password) {
-		password = await vscode.window.showInputBox({
-			password: true,
-			prompt: "Please enter your CESN/RACF password.",	
-			validateInput: text => {
-				return text.length === 0 ? 'Password is required!' : null;
-			},
-		});
-	}
-	return password;
-}
-
+let config = vscode.workspace.getConfiguration('hostbridge');			
 
 export function activate({ subscriptions }: vscode.ExtensionContext) {	
 
@@ -76,7 +63,8 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 		if (password) {
 
 			let hbFile = new FileParser(uri);
-			let options:UriOptions = getHttpOptions("MAKE", password, hbFile.filename, hbFile.contents);
+			let options:UriOptions = getHttpOptions({ port: config.currentRegion.port, repository: config.currentRepository.name, 
+														action: "MAKE", password: password, filename: hbFile.filename, contents: hbFile.contents });
 			
 			//#region MAKE Headers 
 			// POST /***REMOVED***/mscript HTTP/1.1
@@ -118,7 +106,8 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 		if (password) {
 
 			let hbFile = new FileParser(uri);
-			let options:UriOptions = getHttpOptions("RUN", password, hbFile.filename, hbFile.contents);
+			let options:UriOptions = getHttpOptions({ port: config.currentRegion.port, repository: config.currentRepository.name, 
+														action: "RUN", password: password, filename: hbFile.filename, filecontents: hbFile.contents });
 
 			//#region RUN (Exec) Headers 
 			// POST /***REMOVED***/mscript HTTP/1.1
@@ -150,7 +139,7 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 
 	}));	
 
-	vscode.window.registerTreeDataProvider('hostView', new TreeDataProvider());	
+	vscode.window.registerTreeDataProvider('hostView', new TreeDataProvider(subscriptions));	
 
 }
 
@@ -162,25 +151,6 @@ export function deactivate() {}
 
 // show output example
 //vscode.window.showInformationMessage(response);
-
-
-//#region get repository listing
-//POST https://***REMOVED***:***REMOVED***/***REMOVED***/mscript HTTP/1.1
-//X-HB-ACTION: LIST2
-//X-HB-ACTION-TARGET: *
-//X-HB-PLUGIN-VERSION: 201702011429
-//X-HB-DEFAULT-REPOSITORY: ***REMOVED***
-//Authorization: Basic ===
-//X-HB-TRANSLATE: text
-//Cache-Control: no-cache
-//Pragma: no-cache
-//User-Agent: Java/1.8.0_201
-//Host: ***REMOVED***:***REMOVED***
-//Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
-//Connection: keep-alive
-//Content-type: application/x-www-form-urlencoded
-//Content-Length: 56
-//#endregion
 
 
 //#region delete script
