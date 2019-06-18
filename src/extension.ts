@@ -131,7 +131,7 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 				.then((body) => { response = body; })
 				.catch ((err) => { response = err; })
 				.finally(() => {
-					console.log(response);		
+					//console.log(response);		
 					getOutputChannel().appendLine(response);
 					getOutputChannel().show(true);
 				});			

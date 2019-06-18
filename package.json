@@ -15,6 +15,7 @@
     "onCommand:extension.make",
     "onCommand:extension.exec",
     "onCommand:hostView.getRepositoryContents",
+    "onCommand:hostView.refresh",
     "onCommand:extension.updateCurrentRegion",
     "onCommand:extension.updateCurrentRepository",
     "onView:hostView"
@@ -62,6 +63,13 @@
           "when": "resourceExtname == .hbx"
         }
       ],
+      "view/title": [
+        {
+            "command": "hostView.refresh",
+            "when": "view == hostView",
+            "group": "navigation"
+        }
+      ],
       "view/item/context": [
         {
           "command": "hostView.getRepositoryContents",
@@ -81,6 +89,14 @@
       {
         "command": "hostView.getRepositoryContents",
         "title": "Get Repository Contents"
+      },
+      {
+        "command": "hostView.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh_light.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
       },
       {
         "command": "extension.updateCurrentRegion",
