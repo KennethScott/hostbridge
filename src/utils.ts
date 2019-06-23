@@ -24,10 +24,17 @@ export async function getPassword() {
 	return password;
 }
 
+export async function openInUntitled(content: string, language?: string) {
+    const document = await vscode.workspace.openTextDocument({
+        language,
+        content,
+    });
+    vscode.window.showTextDocument(document);
+}
 
 let HbActionsToMethods:any = {
 	'RUN': 'POST',
-	'EXEC': 'POST',
+	'MAKE': 'POST',
 	'LIST2': 'POST',
 	'DELETE': 'DELETE',
 	'GET': 'POST',
@@ -42,22 +49,25 @@ export function getHttpOptions(o:any): UriOptions {
 
 	let options:any =
 	{							
-		method: o.method,
-		//uri: `https://${config.host}:${config.currentRegion.port}/${config.currentRepository.name}/mscript`,
-		uri: `https://${config.host}:${o.port}/${o.repository}/mscript`,
-		headers: {
-			'Authorization': "Basic " + Buffer.from(`${config.userid}:${password}`).toString('base64'),
+		method: method,
+		uri: `https://${config.host}:${o.port}/${o.repository}/${method==='DELETE' ? o.filename : 'mscript'}`,
+		headers: {			
 			'X-HB-ACTION': o.action,
 			'X-HB-ACTION-TARGET': o.filename,
-			'X-HB-TRANSLATE': 'text',
-			'Content-Type': (o.method === 'POST') ? 'text/plain' : 'application/x-www-form-urlencoded',
+			'X-HB-DEFAULT-REPOSITORY': o.repository,
+			'Authorization': "Basic " + Buffer.from(`${config.userid}:${password}`).toString('base64'),
+			'Content-Type': (method === 'POST') ? 'text/plain' : 'application/x-www-form-urlencoded',
 			'Cache-Control': 'no-cache',
 			'Pragma': 'no-cache'				
 		}
 	};
 
-	if (o.filecontents) {
-		options.body = o.filecontents;
+	if (o.contents) {
+		options.body = o.contents;
+	}
+
+	if (method !== 'DELETE') {
+		options.headers['X-HB-TRANSLATE'] = 'text';
 	}
 
 	return options;

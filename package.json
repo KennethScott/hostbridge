@@ -18,6 +18,8 @@
     "onCommand:hostView.refresh",
     "onCommand:extension.updateCurrentRegion",
     "onCommand:extension.updateCurrentRepository",
+    "onCommand:hostView.delete",
+    "onCommand:hostView.getFile",    
     "onView:hostView"
   ],
   "main": "./out/extension.js",
@@ -72,24 +74,36 @@
       ],
       "view/item/context": [
         {
-          "command": "hostView.getRepositoryContents",
-          "when": "view == hostView && viewItem == repository"
+          "command": "hostView.delete",
+          "when": "view == hostView && viewItem == content"
+        },
+        {
+          "command": "hostView.getFile",
+          "when": "view == hostView && viewItem == content"
         }
-      ]
+      ]      
     },
     "commands": [
       {
         "command": "extension.make",
-        "title": "Make Script"
+        "title": "Make"
       },
       {
         "command": "extension.exec",
-        "title": "Exec Script"
+        "title": "Execute"
       },
       {
         "command": "hostView.getRepositoryContents",
         "title": "Get Repository Contents"
       },
+      {
+        "command": "hostView.delete",
+        "title": "Delete"
+      },   
+      {
+        "command": "hostView.getFile",
+        "title": "Get"
+      },           
       {
         "command": "hostView.refresh",
         "title": "Refresh",

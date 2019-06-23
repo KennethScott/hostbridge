@@ -63,6 +63,7 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 		if (password) {
 
 			let hbFile = new FileParser(uri);
+			hbFile.contents += "save as " + hbFile.filename.replace(".hbx", "");
 			let options:UriOptions = getHttpOptions({ port: config.currentRegion.port, repository: config.currentRepository.name, 
 														action: "MAKE", password: password, filename: hbFile.filename, contents: hbFile.contents });
 			
@@ -151,37 +152,3 @@ export function deactivate() {}
 
 // show output example
 //vscode.window.showInformationMessage(response);
-
-
-//#region delete script
-//DELETE https://***REMOVED***:***REMOVED***/***REMOVED***/Test3 HTTP/1.1
-//X-HB-ACTION: DELETE
-//X-HB-ACTION-TARGET: Test3
-//X-HB-PLUGIN-VERSION: 201702011429
-//X-HB-DEFAULT-REPOSITORY: ***REMOVED***
-//Authorization: Basic ===
-//Cache-Control: no-cache
-//Pragma: no-cache
-//User-Agent: Java/1.8.0_201
-//Host: ***REMOVED***:***REMOVED***
-//Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
-//Connection: keep-alive
-//#endregion
-
-//#region get script
-//POST https://***REMOVED***:***REMOVED***/***REMOVED***/mscript HTTP/1.1
-//X-HB-ACTION: GET
-//X-HB-ACTION-TARGET: CdoDepCesaInq
-//X-HB-PLUGIN-VERSION: 201702011429
-//X-HB-DEFAULT-REPOSITORY: ***REMOVED***
-//Authorization: Basic ===
-//X-HB-TRANSLATE: text
-//Cache-Control: no-cache
-//Pragma: no-cache
-//User-Agent: Java/1.8.0_201
-//Host: ***REMOVED***:***REMOVED***
-//Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
-//Connection: keep-alive
-//Content-type: application/x-www-form-urlencoded
-//Content-Length: 54
-//#endregion
