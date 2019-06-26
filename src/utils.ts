@@ -24,12 +24,25 @@ export async function getPassword() {
 	return password;
 }
 
-export async function openInUntitled(content: string, language?: string) {
-    const document = await vscode.workspace.openTextDocument({
-        language,
-        content,
-    });
-    vscode.window.showTextDocument(document);
+// export async function openInUntitled(content: string, language?: string) {
+//     const document = await vscode.workspace.openTextDocument({
+//         language,
+//         content,
+//     });
+//     vscode.window.showTextDocument(document);
+// }
+
+export function openNewNamedVirtualDoc(schemeAndName: vscode.Uri, docContent: string) {
+	vscode.workspace.openTextDocument(schemeAndName).then((doc) => {
+		vscode.window.showTextDocument(doc, 1, false).then(e => {
+		  e.edit(edit => {
+			edit.insert(new vscode.Position(0, 0), docContent);
+		  });
+		});
+	  }, (error) => {
+		getOutputChannel().appendLine(error);
+		getOutputChannel().show(true); 
+	  });
 }
 
 let HbActionsToMethods:any = {
@@ -68,6 +81,10 @@ export function getHttpOptions(o:any): UriOptions {
 
 	if (method !== 'DELETE') {
 		options.headers['X-HB-TRANSLATE'] = 'text';
+	}
+
+	if (o.resolveWithFullResponse) {
+		options.resolveWithFullResponse = o.resolveWithFullResponse;
 	}
 
 	return options;

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { password, getPassword, getOutputChannel, openInUntitled, getHttpOptions } from "./utils";
+import { password, getPassword, getOutputChannel, openNewNamedVirtualDoc, getHttpOptions } from "./utils";
 import { UriOptions } from 'request';
 import * as request from 'request-promise-native';
 import * as xml2js from 'xml2js';
@@ -21,7 +21,8 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
   }
   
   getParent(node?: HostTreeItem): vscode.ProviderResult<HostTreeItem> {    
-    return null;  // TODO actually make this work...
+    // no idea why, but if i return node.parent (which you'd think would be correct), it breaks the auto expand of the repo node...
+    return null; //node.parent;
   }
 
   getTreeItem(node: HostTreeItem): vscode.TreeItem|Thenable<vscode.TreeItem> {    
@@ -60,8 +61,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 
     if (password) {
 
-      let regionAndRepo:string[] = repoNode.tooltip.split('\\');
-      let region = config.regions.find(x => x.name === regionAndRepo[0]);
+      let region = config.regions.find(x => x.name === repoNode.parent.label);
       let options:UriOptions = getHttpOptions({ port: region.port, repository: repoNode.label, 
                                                 action: "LIST2", password: password, filename: "*" });
 
@@ -87,15 +87,17 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
         .then((body) => { 
           response = body; 
           let parser = new xml2js.Parser();            
-          parser.parseString(response, function (err, result) {            
-            result.hbjs_listing.resource[0].entry.sort((a:any,b:any) => a.$.name.localeCompare(b.$.name));                 
-            result.hbjs_listing.resource[0].entry.forEach(entry => {
-              let contentNode = new HostTreeItem(entry.$.name, [], repoNode);
-              contentNode.tooltip = `${region.name}\\${repoNode.label}\\${entry.$.name}`;
-              contentNode.collapsibleState = vscode.TreeItemCollapsibleState.None;
-              contentNode.contextValue = 'content';
-              children.push(contentNode);
-            });              
+          parser.parseString(response, function (err, result) {      
+            if (result.hbjs_listing.resource[0].entry) {       
+              result.hbjs_listing.resource[0].entry.sort((a:any,b:any) => a.$.name.localeCompare(b.$.name));                 
+              result.hbjs_listing.resource[0].entry.forEach(entry => {
+                let contentNode = new HostTreeItem(entry.$.name, [], repoNode);
+                contentNode.tooltip = `${region.name}\\${repoNode.label}\\${entry.$.name}`;
+                contentNode.collapsibleState = vscode.TreeItemCollapsibleState.None;
+                contentNode.contextValue = 'content';
+                children.push(contentNode);
+              });              
+            }
           });          
         })
         .catch ((err) => { response = err; })
@@ -206,10 +208,10 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 
     if (password) {
 
-      let parts:string[] = contentNode.tooltip.split('\\');
-      let region = config.regions.find(x => x.name === parts[0]);
-      let options:UriOptions = getHttpOptions({ port: region.port, repository: parts[1], 
-                                                action: "GET", password: password, filename: contentNode.label });
+      let region = config.regions.find(x => x.name === contentNode.parent.parent.label);
+      let options:UriOptions = getHttpOptions({ port: region.port, repository: contentNode.parent.label, 
+                                                action: "GET", password: password, filename: contentNode.label,
+                                                resolveWithFullResponse: true });
 
       //#region get script
       //POST https://***REMOVED***:***REMOVED***/***REMOVED***/mscript HTTP/1.1
@@ -230,15 +232,22 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
       //#endregion
 
       const result = await request.post(options)
-        .then((body) => {       
-          // todo: conditionally determine type
-          openInUntitled(body, 'javascript');
+        .then((response) => {   
+
+          let filename:string = contentNode.label;
+          // append hbx if hostbridge file
+          if (response.headers['content-type'] === "text/javascript" && !contentNode.label.endsWith('.hbx')) {
+            filename = contentNode.label + '.hbx';
+          }
+
+          let schemeAndName:vscode.Uri = vscode.Uri.parse("untitled:" + filename);
+          openNewNamedVirtualDoc(schemeAndName, response.body);
+
         })
         .catch ((err) => { 
           getOutputChannel().appendLine(err);
           getOutputChannel().show(true); 
-        })
-        .finally(() => { });			
+        });
       
     }
 
@@ -331,7 +340,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 				});			
 		}
   }
-
+  
 }
 
 export class HostExplorer {
