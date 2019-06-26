@@ -1,6 +1,6 @@
-# hostbridge README
+# Hostbridge Extension
 
-This is the README for your extension "hostbridge". After writing up a brief description, we recommend including the following sections.
+This extension adds options for Making and Executing Hostbridge scripts to the Explorer context menu as well as the Editor context menu.  It also adds a Hostbridge view that acts as a host repository browser.  The repository browser provides context menu options to Get and Delete content items.
 
 ## Features
 
@@ -14,38 +14,32 @@ For example if there is an image subfolder under your extension project workspac
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+It is assumed you have access to a mainframe environment running Hostbridge.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+* `hostbridge.host`: The default host
+* `hostbridge.userid`: The default userid to use for host authentication
+* `hostbridge.regions`: The available host CICS regions (specifies both name and port)
+* `hostbridge.currentRegion`: The currently selected host region
+* `hostbridge.repositories`: The available hostbridge repositories
+* `hostbridge.currentRepository`: The currently selected hostbridge repository
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Currently limited to a single host.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+Continuing to work toward fully stable 1.0 version of the extension.
 
-### 1.0.0
+### 0.2.0
 
-Initial release of ...
+Basic repository browsing, make, exec, get, delete functionality working.
 
-### 1.0.1
 
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
 
 -----------------------------------------------------------------------------------------------------------
 
