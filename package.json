@@ -2,7 +2,7 @@
   "name": "hostbridge",
   "displayName": "Hostbridge",
   "description": "Adds a GUI for retrieving, uploading, and compiling hostbridge scripts",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "enableProposedApi": true,
   "engines": {
     "vscode": "^1.34.0"
@@ -12,14 +12,14 @@
   ],
   "activationEvents": [
     "onLanguage:javascript",
-    "onCommand:extension.make",
-    "onCommand:extension.exec",
-    "onCommand:hostView.getRepositoryContents",
-    "onCommand:hostView.refresh",
     "onCommand:extension.updateCurrentRegion",
     "onCommand:extension.updateCurrentRepository",
-    "onCommand:hostView.delete",
-    "onCommand:hostView.getFile",    
+    "onCommand:hostExplorer.make",
+    "onCommand:hostExplorer.exec",
+    "onCommand:hostExplorer.getRepositoryContents",
+    "onCommand:hostExplorer.refresh",
+    "onCommand:hostExplorer.delete",
+    "onCommand:hostExplorer.getFile",
     "onView:hostView"
   ],
   "main": "./out/extension.js",
@@ -28,7 +28,7 @@
       "explorer": [
         {
           "id": "hostView",
-          "name": "Host View"
+          "name": "Host Explorer"
         }
       ]
     },
@@ -43,69 +43,69 @@
     "menus": {
       "editor/context": [
         {
-          "command": "extension.make",
+          "command": "hostExplorer.make",
           "group": "yy_hostbridge",
           "when": "resourceExtname == .hbx"
         },
         {
-          "command": "extension.exec",
+          "command": "hostExplorer.exec",
           "group": "yy_hostbridge",
           "when": "resourceExtname == .hbx"
         }
       ],
       "explorer/context": [
         {
-          "command": "extension.make",
+          "command": "hostExplorer.make",
           "group": "yy_hostbridge",
           "when": "resourceExtname == .hbx"
         },
         {
-          "command": "extension.exec",
+          "command": "hostExplorer.exec",
           "group": "yy_hostbridge",
           "when": "resourceExtname == .hbx"
         }
       ],
       "view/title": [
         {
-            "command": "hostView.refresh",
-            "when": "view == hostView",
-            "group": "navigation"
+          "command": "hostExplorer.refresh",
+          "when": "view == hostView",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "hostView.delete",
+          "command": "hostExplorer.delete",
           "when": "view == hostView && viewItem == content"
         },
         {
-          "command": "hostView.getFile",
+          "command": "hostExplorer.getFile",
           "when": "view == hostView && viewItem == content"
         }
-      ]      
+      ]
     },
     "commands": [
       {
-        "command": "extension.make",
+        "command": "hostExplorer.make",
         "title": "Make"
       },
       {
-        "command": "extension.exec",
+        "command": "hostExplorer.exec",
         "title": "Execute"
       },
       {
-        "command": "hostView.getRepositoryContents",
+        "command": "hostExplorer.getRepositoryContents",
         "title": "Get Repository Contents"
       },
       {
-        "command": "hostView.delete",
+        "command": "hostExplorer.delete",
         "title": "Delete"
-      },   
+      },
       {
-        "command": "hostView.getFile",
+        "command": "hostExplorer.getFile",
         "title": "Get"
-      },           
+      },
       {
-        "command": "hostView.refresh",
+        "command": "hostExplorer.refresh",
         "title": "Refresh",
         "icon": {
           "light": "resources/light/refresh_light.svg",
@@ -119,10 +119,6 @@
       {
         "command": "extension.updateCurrentRepository",
         "title": "Repository"
-      },
-      {
-        "command": "hostView.reveal",
-        "title": "Host View: Reveal"
       }
     ],
     "configuration": {
@@ -216,6 +212,7 @@
   },
   "dependencies": {
     "@types/request-promise-native": "^1.0.16",
+    "path": "^0.12.7",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
     "xml2js": "^0.4.19"

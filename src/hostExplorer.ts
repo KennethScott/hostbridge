@@ -3,6 +3,7 @@ import { password, getPassword, getOutputChannel, openNewNamedVirtualDoc, getHtt
 import { UriOptions } from 'request';
 import * as request from 'request-promise-native';
 import * as xml2js from 'xml2js';
+import * as path from 'path';
 import { FileParser } from "./fileParser";
 
 let config = vscode.workspace.getConfiguration('hostbridge');
@@ -14,7 +15,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
   
   data:HostTreeItem[] = [];
 
-  constructor(context:vscode.ExtensionContext) { }
+  constructor() { }
 
   refresh(node?: HostTreeItem): void {
 		this._onDidChangeTreeData.fire(node);
@@ -31,10 +32,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 
   getChildren(node?: HostTreeItem): vscode.ProviderResult<HostTreeItem[]> {
     if (node === undefined) {
-      //return this.data;
-      let hostNode = new HostTreeItem(vscode.workspace.getConfiguration('hostbridge').host, []);
-      hostNode.contextValue = 'host';
-      hostNode.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+      let hostNode = new HostTreeItem(vscode.workspace.getConfiguration('hostbridge').host, 'host', vscode.TreeItemCollapsibleState.Collapsed, []);
       return [hostNode];
     }
     else if (node.contextValue === 'host') {
@@ -91,10 +89,8 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
             if (result.hbjs_listing.resource[0].entry) {       
               result.hbjs_listing.resource[0].entry.sort((a:any,b:any) => a.$.name.localeCompare(b.$.name));                 
               result.hbjs_listing.resource[0].entry.forEach(entry => {
-                let contentNode = new HostTreeItem(entry.$.name, [], repoNode);
+                let contentNode = new HostTreeItem(entry.$.name, 'content', vscode.TreeItemCollapsibleState.None, [], repoNode);
                 contentNode.tooltip = `${region.name}\\${repoNode.label}\\${entry.$.name}`;
-                contentNode.collapsibleState = vscode.TreeItemCollapsibleState.None;
-                contentNode.contextValue = 'content';
                 children.push(contentNode);
               });              
             }
@@ -116,9 +112,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
     let children:HostTreeItem[] = [];
 
     vscode.workspace.getConfiguration('hostbridge').regions.forEach((region:any) => {
-      let regionNode = new HostTreeItem(region.name, [], hostNode);
-      regionNode.contextValue = 'region';
-      regionNode.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+      let regionNode = new HostTreeItem(region.name, 'region', vscode.TreeItemCollapsibleState.Collapsed, [], hostNode);
       children.push(regionNode);
     });
 
@@ -132,11 +126,9 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
     let children:HostTreeItem[] = [];
 
     vscode.workspace.getConfiguration('hostbridge').repositories.forEach((repo:any) => {
-      let repoNode = new HostTreeItem(repo.name, [], regionNode);
-      repoNode.contextValue = 'repository';
+      let repoNode = new HostTreeItem(repo.name, 'repository', vscode.TreeItemCollapsibleState.Collapsed, [], regionNode);
       repoNode.tooltip = `${regionNode.label}\\${repo.name}`;
-      repoNode.command = { command: 'hostView.getRepositoryContents', title: 'Get Repository Contents', arguments: [repoNode] };
-      repoNode.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+      repoNode.command = { command: 'hostExplorer.getRepositoryContents', title: 'Get Repository Contents', arguments: [repoNode] };
       children.push(repoNode);
     });
 
@@ -144,8 +136,55 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 
     return children;    
   }
+  
+}
 
-  async delete(contentNode:HostTreeItem) {
+export class HostExplorer {
+
+  private hostView: vscode.TreeView<HostTreeItem>;
+
+	constructor(context: vscode.ExtensionContext) {
+    
+    const treeDataProvider = new HostTreeDataProvider();    
+    this.hostView = vscode.window.createTreeView('hostView', { treeDataProvider });  
+
+    context.subscriptions.push(vscode.commands.registerCommand('hostExplorer.make', async (uri:vscode.Uri) => { 
+      this.make(uri, treeDataProvider); 
+    }));
+  
+    context.subscriptions.push(vscode.commands.registerCommand('hostExplorer.exec', async (uri:vscode.Uri) => {
+      this.exec(uri);
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('hostExplorer.refresh', async () => {
+      treeDataProvider.refresh();
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('hostExplorer.getRepositoryContents', async (repoNode:HostTreeItem) => {      
+      treeDataProvider.getChildren(repoNode);
+      this.reveal(repoNode, { expand: true });
+    }));
+    
+    context.subscriptions.push(vscode.commands.registerCommand('hostExplorer.delete', async (contentNode:HostTreeItem) => {      
+      this.delete(contentNode, treeDataProvider);
+      this.reveal(contentNode.parent, { expand: true });
+    }));      
+
+    context.subscriptions.push(vscode.commands.registerCommand('hostExplorer.getFile', async (contentNode:HostTreeItem) => {      
+      this.getFile(contentNode);
+    })); 
+
+	}
+
+
+	private reveal(node:HostTreeItem, options:any): Thenable<void> {		
+		if (node) {
+			return this.hostView.reveal(node, options);
+		}
+		return null;
+  }
+  
+  private async delete(contentNode:HostTreeItem, treeDataProvider:HostTreeDataProvider) {
 
     await vscode.window.showInputBox({
 			prompt: "Enter 'yes' to confirm you want to delete this file from the host."
@@ -185,7 +224,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
           const result = await request.post(options)
             .then((body) => { 
               response = body; 
-              this.refresh(contentNode.parent);        
+              treeDataProvider.refresh(contentNode.parent);        
             })
             .catch ((err) => { response = err; })
             .finally(() => {	            
@@ -200,7 +239,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 
   }    
 
-  async getFile(contentNode:HostTreeItem) {
+  private async getFile(contentNode:HostTreeItem) {
     
     let config = vscode.workspace.getConfiguration('hostbridge');			
 
@@ -251,11 +290,11 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
       
     }
 
-  }    
-   
-	async make (uri:vscode.Uri) {
-	
-		let response: any = {};
+  }  
+
+  private async make(uri:vscode.Uri, treeDataProvider:HostTreeDataProvider) {
+
+    let response: any = {};
 
 		await getPassword();	
 
@@ -287,7 +326,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 			const result = await request.post(options)
 				.then((body) => { 
           response = body; 
-          this.refresh();
+          treeDataProvider.refresh();
 				})
 				.catch ((err) => { response = err; })
 				.finally(() => {
@@ -296,12 +335,11 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 					getOutputChannel().show(true);
 				});					
 
-		}
+		}    
+  }
 
-	}
+  private async exec(uri:vscode.Uri) {
 
-  async exec (uri:vscode.Uri) {
-    
     let response: any = {};
 
 		await getPassword();		
@@ -338,67 +376,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 					getOutputChannel().appendLine(response);
 					getOutputChannel().show(true);
 				});			
-		}
-  }
-  
-}
-
-export class HostExplorer {
-
-  private hostView: vscode.TreeView<HostTreeItem>;
-  private hostTreeDataProvider: HostTreeDataProvider;  
-
-	constructor(context:vscode.ExtensionContext) {
-		/* Please note that login information is hardcoded only for this example purpose and recommended not to do it in general. */
-		//const ftpModel = new FtpModel('mirror.switch.ch', 'anonymous', 'anonymous@anonymous.de');
-    
-    // this guy has to be local for creating the treeview, but we also need it exposed.. there has to be a better way...
-    const treeDataProvider = new HostTreeDataProvider(context);    
-    this.hostView = vscode.window.createTreeView('hostView', { treeDataProvider });
-    
-    this.hostTreeDataProvider = treeDataProvider;
-
-    context.subscriptions.push(vscode.commands.registerCommand('hostView.refresh', async () => {
-      treeDataProvider.refresh();
-    }));
-
-    context.subscriptions.push(vscode.commands.registerCommand('hostView.getRepositoryContents', async (repoNode:HostTreeItem) => {      
-      treeDataProvider.getChildren(repoNode);
-      this.reveal(repoNode, { expand: true });
-      //this._onDidChangeTreeData.fire(repoNode);
-    }));
-    
-    context.subscriptions.push(vscode.commands.registerCommand('hostView.delete', async (contentNode:HostTreeItem) => {      
-      treeDataProvider.delete(contentNode);
-      this.reveal(contentNode.parent, { expand: true });
-    }));      
-
-    context.subscriptions.push(vscode.commands.registerCommand('hostView.getFile', async (contentNode:HostTreeItem) => {      
-      treeDataProvider.getFile(contentNode);
-    })); 
-
-		//vscode.commands.registerCommand('ftpExplorer.refresh', () => treeDataProvider.refresh());
-		//vscode.commands.registerCommand('ftpExplorer.openFtpResource', resource => this.openResource(resource));
-		//vscode.commands.registerCommand('ftpExplorer.revealResource', (node) => this.reveal(node));
-	}
-
-	private openResource(resource: vscode.Uri): void {
-		vscode.window.showTextDocument(resource);
-	}
-
-	public reveal(node:HostTreeItem, options:any): Thenable<void> {		
-		if (node) {
-			return this.hostView.reveal(node, options);
-		}
-		return null;
-  }
-  
-  public make(uri:vscode.Uri) {
-    this.hostTreeDataProvider.make(uri);
-  }
-
-  public exec(uri:vscode.Uri) {
-    this.hostTreeDataProvider.exec(uri);
+		}    
   }
 
 }
@@ -407,12 +385,66 @@ export class HostTreeItem extends vscode.TreeItem {
   children: HostTreeItem[]|undefined;
   parent: HostTreeItem|undefined;
 
-  constructor(label: string, children?: HostTreeItem[], parent?: HostTreeItem) {
-    super(
-        label,
-        children === undefined ? vscode.TreeItemCollapsibleState.None :
-                                 vscode.TreeItemCollapsibleState.Expanded);
+  constructor(label: string, contextValue: string, collapsibleState: vscode.TreeItemCollapsibleState, children?: HostTreeItem[], parent?: HostTreeItem) {
+
+    super(label, collapsibleState);
+
     this.children = children;
     this.parent = parent;
+    this.contextValue = contextValue;
+
+    let icon: string;
+
+    switch (contextValue) {
+      case 'host':
+        icon = 'html.svg'; 
+        break;
+      case 'region':
+        icon = 'image.svg'; 
+        break;
+      case 'repository':
+        icon = 'css.svg'; 
+        break;
+      case 'content':
+        // get extension if exists and determine type..
+        let pieces:string[] = label.split('.');
+        if (pieces.length > 1) {
+          switch (pieces[pieces.length-1]) {
+            case 'css':
+              icon = 'css.svg'; 
+              break;
+            case 'jpg':
+            case 'gif':
+              icon = 'image.svg';
+              break;
+            case 'htm':
+            case 'html':
+              icon = 'html.svg';
+              break;
+            case 'js':
+            case 'hbx':
+              icon = 'javascript.svg';
+              break;
+            case 'xml':
+              icon = 'xml.svg'; 
+              break;
+            default:
+              icon = 'document.svg';
+              break;
+          }
+        }
+        else {
+          icon = 'javascript.svg';
+        }
+        break;
+      default:
+        break;
+    }
+
+    this.iconPath = {
+      light: path.join(__filename, '..', '..', 'resources', 'light', icon),
+      dark: path.join(__filename, '..', '..', 'resources', 'dark', icon)
+    };
+
   }
 }

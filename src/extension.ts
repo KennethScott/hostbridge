@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { QuickPickItem } from 'vscode';
 import { statusbarRegion, statusbarRepository, setupStatusBarItems, updateStatusBarItems } from "./statusBarHelper";
-import { HostExplorer } from './hostView';
+import { HostExplorer } from './hostExplorer';
 
 export function activate(context: vscode.ExtensionContext) {	
 
@@ -48,14 +48,6 @@ export function activate(context: vscode.ExtensionContext) {
 				statusbarRepository.text = selection.label;
 			});		
 
-	}));
-
-	context.subscriptions.push(vscode.commands.registerCommand('extension.make', async (uri:vscode.Uri) => { 
-		hostExplorer.make(uri); 
-	}));
-
-	context.subscriptions.push(vscode.commands.registerCommand('extension.exec', async (uri:vscode.Uri) => {
-		hostExplorer.exec(uri);
 	}));	
 
 }
