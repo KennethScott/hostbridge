@@ -397,13 +397,13 @@ export class HostTreeItem extends vscode.TreeItem {
 
     switch (contextValue) {
       case 'host':
-        icon = 'html.svg'; 
+        icon = 'folder-server.svg'; 
         break;
       case 'region':
-        icon = 'image.svg'; 
+        icon = 'folder-environment.svg'; 
         break;
       case 'repository':
-        icon = 'css.svg'; 
+        icon = 'folder-javascript.svg'; 
         break;
       case 'content':
         // get extension if exists and determine type..
