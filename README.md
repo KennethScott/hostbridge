@@ -1,6 +1,6 @@
 # Hostbridge Extension
 
-This extension adds options for Making and Executing Hostbridge scripts to the Explorer context menu as well as the Editor context menu.  It also adds a Hostbridge view that acts as a host repository browser.  The repository browser provides context menu options to Get and Delete content items.
+This extension adds options to Make, Execute, and Put Hostbridge scripts on the Explorer context menu as well as the Editor context menu.  It also adds a Hostbridge Explorer that acts as a host repository browser.  The repository browser provides context menu options to Get and Delete content items.
 
 ## Features
 
@@ -35,9 +35,9 @@ Currently limited to a single host.
 
 Continuing to work toward fully stable 1.0 version of the extension.
 
-### 0.2.0
+### 0.3.5
 
-Basic repository browsing, make, exec, get, delete functionality working.
+Added Put feature and also changed folder icons to use theme defaults.
 
 
 

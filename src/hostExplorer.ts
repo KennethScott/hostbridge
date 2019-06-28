@@ -170,9 +170,13 @@ export class HostExplorer {
       this.reveal(contentNode.parent, { expand: true });
     }));      
 
-    context.subscriptions.push(vscode.commands.registerCommand('hostExplorer.getFile', async (contentNode:HostTreeItem) => {      
-      this.getFile(contentNode);
+    context.subscriptions.push(vscode.commands.registerCommand('hostExplorer.get', async (contentNode:HostTreeItem) => {      
+      this.get(contentNode);
     })); 
+
+    context.subscriptions.push(vscode.commands.registerCommand('hostExplorer.put', async (uri:vscode.Uri) => { 
+      this.put(uri, treeDataProvider); 
+    }));
 
 	}
 
@@ -239,7 +243,7 @@ export class HostExplorer {
 
   }    
 
-  private async getFile(contentNode:HostTreeItem) {
+  private async get(contentNode:HostTreeItem) {
     
     let config = vscode.workspace.getConfiguration('hostbridge');			
 
@@ -321,6 +325,51 @@ export class HostExplorer {
 			// Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
 			// Connection: keep-alive
 			// Content-Length: 994
+			//#endregion
+
+			const result = await request.post(options)
+				.then((body) => { 
+          response = body; 
+          treeDataProvider.refresh();
+				})
+				.catch ((err) => { response = err; })
+				.finally(() => {
+					console.log(response);		
+					getOutputChannel().appendLine(response);
+					getOutputChannel().show(true);
+				});					
+
+		}    
+  }
+
+  private async put(uri:vscode.Uri, treeDataProvider:HostTreeDataProvider) {
+
+    let response: any = {};
+
+		await getPassword();	
+
+		if (password) {
+
+			let hbFile = new FileParser(uri);
+			let options:UriOptions = getHttpOptions({ port: config.currentRegion.port, repository: config.currentRepository.name, 
+														action: "PUT", password: password, filename: hbFile.filename, contents: hbFile.contents });
+			
+			//#region PUT Headers 
+      // PUT https://host:port/repo/Test3.hbx HTTP/1.1
+      // X-HB-ACTION: PUT
+      // X-HB-ACTION-TARGET: Test3.hbx
+      // X-HB-PLUGIN-VERSION: 201702011429
+      // X-HB-DEFAULT-REPOSITORY: repo
+      // Authorization: Basic ==
+      // Content-type: text/plain
+      // X-HB-TRANSLATE: text
+      // Cache-Control: no-cache
+      // Pragma: no-cache
+      // User-Agent: Java/1.8.0_201
+      // Host: host:port
+      // Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+      // Connection: keep-alive
+      // Content-Length: 913
 			//#endregion
 
 			const result = await request.post(options)

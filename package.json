@@ -2,7 +2,7 @@
   "name": "hostbridge",
   "displayName": "Hostbridge",
   "description": "Adds a GUI for retrieving, uploading, and compiling hostbridge scripts",
-  "version": "0.3.0",
+  "version": "0.3.5",
   "enableProposedApi": true,
   "engines": {
     "vscode": "^1.34.0"
@@ -19,7 +19,8 @@
     "onCommand:hostExplorer.getRepositoryContents",
     "onCommand:hostExplorer.refresh",
     "onCommand:hostExplorer.delete",
-    "onCommand:hostExplorer.getFile",
+    "onCommand:hostExplorer.get",
+    "onCommand:hostExplorer.put",
     "onView:hostView"
   ],
   "main": "./out/extension.js",
@@ -51,6 +52,10 @@
           "command": "hostExplorer.exec",
           "group": "yy_hostbridge",
           "when": "resourceExtname == .hbx"
+        },
+        {
+          "command": "hostExplorer.put",
+          "group": "yy_hostbridge"
         }
       ],
       "explorer/context": [
@@ -63,6 +68,10 @@
           "command": "hostExplorer.exec",
           "group": "yy_hostbridge",
           "when": "resourceExtname == .hbx"
+        },
+        {
+          "command": "hostExplorer.put",
+          "group": "yy_hostbridge"
         }
       ],
       "view/title": [
@@ -78,7 +87,11 @@
           "when": "view == hostView && viewItem == content"
         },
         {
-          "command": "hostExplorer.getFile",
+          "command": "hostExplorer.get",
+          "when": "view == hostView && viewItem == content"
+        },
+        {
+          "command": "hostExplorer.put",
           "when": "view == hostView && viewItem == content"
         }
       ]
@@ -101,8 +114,12 @@
         "title": "Delete"
       },
       {
-        "command": "hostExplorer.getFile",
+        "command": "hostExplorer.get",
         "title": "Get"
+      },
+      {
+        "command": "hostExplorer.put",
+        "title": "Put"
       },
       {
         "command": "hostExplorer.refresh",

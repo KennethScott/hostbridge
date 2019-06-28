@@ -24,14 +24,6 @@ export async function getPassword() {
 	return password;
 }
 
-// export async function openInUntitled(content: string, language?: string) {
-//     const document = await vscode.workspace.openTextDocument({
-//         language,
-//         content,
-//     });
-//     vscode.window.showTextDocument(document);
-// }
-
 export function openNewNamedVirtualDoc(schemeAndName: vscode.Uri, docContent: string) {
 	vscode.workspace.openTextDocument(schemeAndName).then((doc) => {
 		vscode.window.showTextDocument(doc, 1, false).then(e => {
@@ -51,6 +43,7 @@ let HbActionsToMethods:any = {
 	'LIST2': 'POST',
 	'DELETE': 'DELETE',
 	'GET': 'POST',
+	'PUT': 'PUT'
 };
 
 /// action = MAKE or RUN
@@ -63,7 +56,7 @@ export function getHttpOptions(o:any): UriOptions {
 	let options:any =
 	{							
 		method: method,
-		uri: `https://${config.host}:${o.port}/${o.repository}/${method==='DELETE' ? o.filename : 'mscript'}`,
+		uri: `https://${config.host}:${o.port}/${o.repository}/${(method==='POST') ? 'mscript' : o.filename}`,
 		headers: {			
 			'X-HB-ACTION': o.action,
 			'X-HB-ACTION-TARGET': o.filename,

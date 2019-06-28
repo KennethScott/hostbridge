@@ -8,7 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - Support for multiple hosts
 - 3270 emulator
+
+
+## [0.3.5] - 2019-06-27
+### Added
 - Put option
+
+### Changed
+- Changed folder icons for host/region/repo to use theme default
+
+### Removed
+- Nothing
+
 
 ## [0.2.0] - 2019-06-25
 ### Added
