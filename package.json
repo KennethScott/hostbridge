@@ -1,7 +1,7 @@
 {
   "name": "hostbridge",
-  "displayName": "Hostbridge",
-  "description": "Adds a GUI for retrieving, uploading, and compiling hostbridge scripts",
+  "displayName": "Hostbridge for VSCode",
+  "description": "Adds a GUI for retrieving, uploading, compiling, and executing hostbridge scripts",
   "version": "0.3.5",
   "enableProposedApi": true,
   "engines": {
@@ -144,12 +144,12 @@
       "properties": {
         "hostbridge.host": {
           "type": "string",
-          "default": "***REMOVED***",
+          "default": "",
           "description": "Specifies the machine name or IP address of the host."
         },
         "hostbridge.userid": {
           "type": "string",
-          "default": "***REMOVED***",
+          "default": "",
           "description": "Specifies the CESN/RACF userid to login with."
         },
         "hostbridge.regions": {
