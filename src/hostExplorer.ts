@@ -393,20 +393,15 @@ export class HostTreeItem extends vscode.TreeItem {
     this.parent = parent;
     this.contextValue = contextValue;
 
-    let icon: string;
-
     switch (contextValue) {
       case 'host':
-        icon = 'folder-server.svg'; 
-        break;
       case 'region':
-        icon = 'folder-environment.svg'; 
-        break;
       case 'repository':
-        icon = 'folder-javascript.svg'; 
+        this.iconPath = vscode.ThemeIcon.Folder; 
         break;
       case 'content':
         // get extension if exists and determine type..
+        let icon: string;
         let pieces:string[] = label.split('.');
         if (pieces.length > 1) {
           switch (pieces[pieces.length-1]) {
@@ -436,15 +431,14 @@ export class HostTreeItem extends vscode.TreeItem {
         else {
           icon = 'javascript.svg';
         }
+        this.iconPath = {
+          light: path.join(__filename, '..', '..', 'resources', 'light', icon),
+          dark: path.join(__filename, '..', '..', 'resources', 'dark', icon)
+        };
         break;
       default:
         break;
     }
-
-    this.iconPath = {
-      light: path.join(__filename, '..', '..', 'resources', 'light', icon),
-      dark: path.join(__filename, '..', '..', 'resources', 'dark', icon)
-    };
 
   }
 }
