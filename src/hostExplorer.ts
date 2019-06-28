@@ -64,17 +64,17 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
                                                 action: "LIST2", password: password, filename: "*" });
 
       //#region get repository listing
-      //POST https://***REMOVED***:***REMOVED***/***REMOVED***/mscript HTTP/1.1
+      //POST https://host:port/repository/mscript HTTP/1.1
       //X-HB-ACTION: LIST2
       //X-HB-ACTION-TARGET: *
       //X-HB-PLUGIN-VERSION: 201702011429
-      //X-HB-DEFAULT-REPOSITORY: ***REMOVED***
+      //X-HB-DEFAULT-REPOSITORY: repository
       //Authorization: Basic ===
       //X-HB-TRANSLATE: text
       //Cache-Control: no-cache
       //Pragma: no-cache
       //User-Agent: Java/1.8.0_201
-      //Host: ***REMOVED***:***REMOVED***
+      //Host: host:port
       //Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
       //Connection: keep-alive
       //Content-type: application/x-www-form-urlencoded
@@ -211,16 +211,16 @@ export class HostExplorer {
                                                     action: "DELETE", password: password, filename: contentNode.label });
 
           //#region delete script
-          //DELETE https://***REMOVED***:***REMOVED***/***REMOVED***/Test3 HTTP/1.1
+          //DELETE https://host:port/repository/Test3 HTTP/1.1
           //X-HB-ACTION: DELETE
           //X-HB-ACTION-TARGET: Test3
           //X-HB-PLUGIN-VERSION: 201702011429
-          //X-HB-DEFAULT-REPOSITORY: ***REMOVED***
+          //X-HB-DEFAULT-REPOSITORY: repository
           //Authorization: Basic ===
           //Cache-Control: no-cache
           //Pragma: no-cache
           //User-Agent: Java/1.8.0_201
-          //Host: ***REMOVED***:***REMOVED***
+          //Host: host:port
           //Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
           //Connection: keep-alive
           //#endregion
@@ -257,17 +257,17 @@ export class HostExplorer {
                                                 resolveWithFullResponse: true });
 
       //#region get script
-      //POST https://***REMOVED***:***REMOVED***/***REMOVED***/mscript HTTP/1.1
+      //POST https://host:port/repository/mscript HTTP/1.1
       //X-HB-ACTION: GET
       //X-HB-ACTION-TARGET: CdoDepCesaInq
       //X-HB-PLUGIN-VERSION: 201702011429
-      //X-HB-DEFAULT-REPOSITORY: ***REMOVED***
+      //X-HB-DEFAULT-REPOSITORY: repository
       //Authorization: Basic ===
       //X-HB-TRANSLATE: text
       //Cache-Control: no-cache
       //Pragma: no-cache
       //User-Agent: Java/1.8.0_201
-      //Host: ***REMOVED***:***REMOVED***
+      //Host: host:port
       //Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
       //Connection: keep-alive
       //Content-type: application/x-www-form-urlencoded
@@ -310,18 +310,18 @@ export class HostExplorer {
 														action: "MAKE", password: password, filename: hbFile.filename, contents: hbFile.contents });
 			
 			//#region MAKE Headers 
-			// POST /***REMOVED***/mscript HTTP/1.1
+			// POST https://host:port/repository/mscript HTTP/1.1
 			// X-HB-ACTION: MAKE
 			// X-HB-ACTION-TARGET: Test3.hbx
 			// X-HB-PLUGIN-VERSION: 201702011429
-			// X-HB-DEFAULT-REPOSITORY: ***REMOVED***
+			// X-HB-DEFAULT-REPOSITORY: repository
 			// Authorization: Basic ---
 			// Content-type: text/plain
 			// X-HB-TRANSLATE: text
 			// Cache-Control: no-cache
 			// Pragma: no-cache
 			// User-Agent: Java/1.8.0_201
-			// Host: ***REMOVED***:***REMOVED***
+			// Host: host:port
 			// Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
 			// Connection: keep-alive
 			// Content-Length: 994
@@ -400,18 +400,18 @@ export class HostExplorer {
 														action: "RUN", password: password, filename: hbFile.filename, contents: hbFile.contents });
 
 			//#region RUN (Exec) Headers 
-			// POST /***REMOVED***/mscript HTTP/1.1
+			// POST /repository/mscript HTTP/1.1
 			// X-HB-ACTION: RUN
 			// X-HB-ACTION-TARGET: Test3.hbx
 			// X-HB-PLUGIN-VERSION: 201702011429
-			// X-HB-DEFAULT-REPOSITORY: ***REMOVED***
+			// X-HB-DEFAULT-REPOSITORY: repository
 			// Authorization: Basic ---
 			// Content-type: text/plain
 			// X-HB-TRANSLATE: text
 			// Cache-Control: no-cache
 			// Pragma: no-cache
 			// User-Agent: Java/1.8.0_201
-			// Host: ***REMOVED***:***REMOVED***
+			// Host: host:port
 			// Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
 			// Connection: keep-alive
 			// Content-Length: 979

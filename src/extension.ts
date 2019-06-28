@@ -7,7 +7,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let hostExplorer = new HostExplorer(context);
 
-	console.log('Hostbridge extension active.');
+	console.log('HostBridge extension active.');
 
 	setupStatusBarItems(context.subscriptions);
 	updateStatusBarItems();
