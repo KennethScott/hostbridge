@@ -26,6 +26,10 @@ This extension contributes the following settings:
 
 ## Known Issues
 
+Doesn't prompt to set host and userid (or regions/repos) on first load
+
+Doesn't reprompt for password on login failure.  Must restart VSCode and try again.
+
 Currently limited to a single host.
 
 ## Release Notes
