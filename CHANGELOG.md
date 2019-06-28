@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 3270 emulator
 
 
+## [0.3.6] - 2019-06-28
+### Added
+- Added ability to notify and retry on login failure.
+
+### Changed
+- Nothing
+
+### Removed
+- Nothing
+
+
 ## [0.3.5] - 2019-06-27
 ### Added
 - Put option

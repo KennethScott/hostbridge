@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { password, getPassword, getOutputChannel, openNewNamedVirtualDoc, getHttpOptions } from "./utils";
+import { getPassword, setPassword, getOutputChannel, openNewNamedVirtualDoc, getHttpOptions } from "./utils";
 import { UriOptions } from 'request';
 import * as request from 'request-promise-native';
 import * as xml2js from 'xml2js';
@@ -55,7 +55,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 
     let config = vscode.workspace.getConfiguration('hostbridge');			
 
-    await getPassword();		
+    let password = await getPassword();
 
     if (password) {
 
@@ -96,7 +96,13 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
             }
           });          
         })
-        .catch ((err) => { response = err; })
+        .catch ((err) => {
+          if (err.statusCode === 401) {
+            setPassword("");
+            vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
+          }
+          response = err; 
+        })
         .finally(() => {	            
           getOutputChannel().appendLine(response);
           getOutputChannel().show(true);                        
@@ -201,7 +207,7 @@ export class HostExplorer {
 
         let config = vscode.workspace.getConfiguration('hostbridge');			
 
-        await getPassword();		
+        let password = await getPassword();		
 
         if (password) {
 
@@ -230,7 +236,13 @@ export class HostExplorer {
               response = body; 
               treeDataProvider.refresh(contentNode.parent);        
             })
-            .catch ((err) => { response = err; })
+            .catch ((err) => {
+              if (err.statusCode === 401) {
+                setPassword("");
+                vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
+              }
+              response = err; 
+            })
             .finally(() => {	            
               getOutputChannel().appendLine(response);
               getOutputChannel().show(true);                        
@@ -247,7 +259,7 @@ export class HostExplorer {
     
     let config = vscode.workspace.getConfiguration('hostbridge');			
 
-    await getPassword();		
+    let password = await getPassword();
 
     if (password) {
 
@@ -288,6 +300,10 @@ export class HostExplorer {
 
         })
         .catch ((err) => { 
+          if (err.statusCode === 401) {
+            setPassword("");
+            vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
+          }
           getOutputChannel().appendLine(err);
           getOutputChannel().show(true); 
         });
@@ -300,7 +316,7 @@ export class HostExplorer {
 
     let response: any = {};
 
-		await getPassword();	
+		let password = await getPassword();
 
 		if (password) {
 
@@ -332,9 +348,14 @@ export class HostExplorer {
           response = body; 
           treeDataProvider.refresh();
 				})
-				.catch ((err) => { response = err; })
-				.finally(() => {
-					console.log(response);		
+				.catch ((err) => {
+          if (err.statusCode === 401) {
+            setPassword("");
+            vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
+          }
+          response = err; 
+        })
+				.finally(() => {	
 					getOutputChannel().appendLine(response);
 					getOutputChannel().show(true);
 				});					
@@ -346,7 +367,7 @@ export class HostExplorer {
 
     let response: any = {};
 
-		await getPassword();	
+		let password = await getPassword();
 
 		if (password) {
 
@@ -377,9 +398,14 @@ export class HostExplorer {
           response = body; 
           treeDataProvider.refresh();
 				})
-				.catch ((err) => { response = err; })
-				.finally(() => {
-					console.log(response);		
+				.catch ((err) => {
+          if (err.statusCode === 401) {
+            setPassword("");
+            vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
+          }
+          response = err; 
+        })
+				.finally(() => {	
 					getOutputChannel().appendLine(response);
 					getOutputChannel().show(true);
 				});					
@@ -391,7 +417,7 @@ export class HostExplorer {
 
     let response: any = {};
 
-		await getPassword();		
+		let password = await getPassword();	
 
 		if (password) {
 
@@ -419,7 +445,13 @@ export class HostExplorer {
 
 			const result = await request.post(options)
 				.then((body) => { response = body; })
-				.catch ((err) => { response = err; })
+				.catch ((err) => {
+          if (err.statusCode === 401) {
+            setPassword("");
+            vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
+          }
+          response = err; 
+        })
 				.finally(() => {
 					//console.log(response);		
 					getOutputChannel().appendLine(response);

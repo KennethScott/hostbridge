@@ -2,6 +2,8 @@
 
 This extension adds options to Make, Execute, and Put Hostbridge scripts on the Explorer context menu as well as the Editor context menu.  It also adds a Hostbridge Explorer that acts as a host repository browser.  The repository browser provides context menu options to Get and Delete content items.
 
+Please note this extension is still considered beta.
+
 ## Disclaimer
 This is an unofficial HostBridge extension.  I am not affiliated with [HostBridge](http://www.hostbridge.com).
 
@@ -28,17 +30,15 @@ This extension contributes the following settings:
 
 Doesn't prompt to set host and userid (or regions/repos) on first load
 
-Doesn't reprompt for password on login failure.  Must restart VSCode and try again.
-
 Currently limited to a single host.
 
 ## Release Notes
 
 Continuing to work toward fully stable 1.0 version of the extension.
 
-### 0.3.5
+### 0.3.6
 
-Added Put feature and also changed folder icons to use theme defaults.
+Added ability to notify and retry on login failure.
 
 
 

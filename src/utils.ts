@@ -10,10 +10,10 @@ export function getOutputChannel(): vscode.OutputChannel {
 }
 
 
-export let password: string|undefined;
+let _password: string|undefined;
 export async function getPassword() {
-	if (!password) {
-		password = await vscode.window.showInputBox({
+	if (!_password) {
+		_password = await vscode.window.showInputBox({
 			password: true,
 			prompt: "Please enter your CESN/RACF password.",	
 			validateInput: text => {
@@ -21,7 +21,10 @@ export async function getPassword() {
 			},
 		});
 	}
-	return password;
+	return _password;
+}
+export function setPassword(val: string|undefined) {
+	_password = val;
 }
 
 export function openNewNamedVirtualDoc(schemeAndName: vscode.Uri, docContent: string) {
@@ -61,7 +64,7 @@ export function getHttpOptions(o:any): UriOptions {
 			'X-HB-ACTION': o.action,
 			'X-HB-ACTION-TARGET': o.filename,
 			'X-HB-DEFAULT-REPOSITORY': o.repository,
-			'Authorization': "Basic " + Buffer.from(`${config.userid}:${password}`).toString('base64'),
+			'Authorization': "Basic " + Buffer.from(`${config.userid}:${_password}`).toString('base64'),
 			'Content-Type': (method === 'POST') ? 'text/plain' : 'application/x-www-form-urlencoded',
 			'Cache-Control': 'no-cache',
 			'Pragma': 'no-cache'				
