@@ -142,6 +142,53 @@
       "type": "object",
       "title": "Hostbridge",
       "properties": {
+        "hostbridge.hosts": {
+          "type": "array",
+          "description": "All available hosts, regions, and repositories.",
+          "items": {
+            "type": "object",
+            "title": "Hosts",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Host name or IP address"
+              },
+              "regions": {
+                "type": "array",
+                "description": "Regions",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "CICS Region Name"
+                    },
+                    "port": {
+                      "type": "number",
+                      "description": "CICS Region Port#"
+                    },
+                    "protocol": {
+                      "type": "string",
+                      "description": "HTTP or HTTPS"
+                    },
+                    "userid": {
+                      "type": "string",
+                      "description": "Specifies the CESN/RACF userid to login with."
+                    },
+                    "repositories": {
+                      "type": "array",
+                      "description": "Repositories",
+                      "items": {
+                        "type": "string",
+                        "description": "Repository Name"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },        
         "hostbridge.host": {
           "type": "string",
           "default": "",
