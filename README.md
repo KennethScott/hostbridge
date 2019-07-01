@@ -19,26 +19,21 @@ It is assumed you have access to a mainframe environment running Hostbridge.
 
 This extension contributes the following settings:
 
-* `hostbridge.host`: The default host
-* `hostbridge.userid`: The default userid to use for host authentication
-* `hostbridge.regions`: The available host CICS regions (specifies both name and port)
-* `hostbridge.currentRegion`: The currently selected host region
-* `hostbridge.repositories`: The available hostbridge repositories
-* `hostbridge.currentRepository`: The currently selected hostbridge repository
+* `hostbridge.hosts`: The available hosts and their respective regions and repositories
+* `hostbridge.activeRepository`: The currently selected hostbridge repository
 
 ## Known Issues
 
-Doesn't prompt to set host and userid (or regions/repos) on first load
-
-Currently limited to a single host.
+Doesn't prompt to set hosts on first load
+Doesn't support processing multiple scripts at once
 
 ## Release Notes
 
 Continuing to work toward fully stable 1.0 version of the extension.
 
-### 0.3.6
+### 0.6.0
 
-Added ability to notify and retry on login failure.
+Reworked settings to allow for multiple hosts.  Userid is also now set per region.
 
 
 

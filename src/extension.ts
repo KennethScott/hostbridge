@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { QuickPickItem } from 'vscode';
-import { statusbarRegion, statusbarRepository, setupStatusBarItems, updateStatusBarItems } from "./statusBarHelper";
+import { statusbarRepository, setupStatusBarItem, updateStatusBarItem } from "./statusBarHelper";
 import { HostExplorer } from './hostExplorer';
 
 export function activate(context: vscode.ExtensionContext) {	
@@ -9,34 +9,25 @@ export function activate(context: vscode.ExtensionContext) {
 
 	console.log('HostBridge extension active.');
 
-	setupStatusBarItems(context.subscriptions);
-	updateStatusBarItems();
+	setupStatusBarItem(context.subscriptions);
+	updateStatusBarItem();
 
-	context.subscriptions.push(vscode.commands.registerCommand('extension.updateCurrentRegion', () => {
-		
-		let regions:QuickPickItem[] = [];
-		vscode.workspace.getConfiguration('hostbridge').regions.forEach((r:any) => {
-			regions.push({ label: r.name.toString(), description: r.port.toString() });
-		});
-		regions.sort((a:QuickPickItem,b:QuickPickItem) => a.label.localeCompare(b.label)); 
+	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateStatusBarItem));
 
-		vscode.window.showQuickPick(regions, { placeHolder: 'Select the desired CICS region.' })
-			.then((selection:any) => {
-				if (!selection) {
-					return;
-				}
-				vscode.workspace.getConfiguration().update('hostbridge.currentRegion', { name: selection.label, port: +selection.description }, vscode.ConfigurationTarget.Global);
-				statusbarRegion.text = selection.label;
-			});		
-
-	}));
-
-	context.subscriptions.push(vscode.commands.registerCommand('extension.updateCurrentRepository', () => {
+	context.subscriptions.push(vscode.commands.registerCommand('extension.updateActiveRepository', () => {
 		
 		let repositories:QuickPickItem[] = [];
-		vscode.workspace.getConfiguration('hostbridge').repositories.forEach((r:any) => {
-			repositories.push({ label: r.name.toString() });
+
+		let config = vscode.workspace.getConfiguration('hostbridge');	
+ 
+		config.hosts.forEach((host:any) => {
+			host.regions.forEach((region:any) => {
+				region.repositories.forEach((repository:any) => {
+					repositories.push({ label: host.name + "\\" + region.name + "\\" + repository});
+				});
+			});
 		});
+
 		repositories.sort((a:QuickPickItem,b:QuickPickItem) => a.label.localeCompare(b.label)); 
 
 		vscode.window.showQuickPick(repositories, { placeHolder: 'Select the desired repository.' })
@@ -44,7 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
 				if (!selection) {
 					return;
 				}
-				vscode.workspace.getConfiguration().update('hostbridge.currentRepository', { name: selection.label }, vscode.ConfigurationTarget.Global);
+				vscode.workspace.getConfiguration().update('hostbridge.activeRepository', { name: selection.label }, vscode.ConfigurationTarget.Global);
 				statusbarRepository.text = selection.label;
 			});		
 

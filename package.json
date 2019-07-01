@@ -2,7 +2,7 @@
   "name": "hostbridge",
   "displayName": "Hostbridge for VSCode",
   "description": "Adds a GUI for retrieving, uploading, compiling, and executing hostbridge scripts",
-  "version": "0.3.6",
+  "version": "0.6.0",
   "enableProposedApi": true,
   "engines": {
     "vscode": "^1.34.0"
@@ -12,8 +12,8 @@
   ],
   "activationEvents": [
     "onLanguage:javascript",
-    "onCommand:extension.updateCurrentRegion",
-    "onCommand:extension.updateCurrentRepository",
+    "onFileSystem:file",
+    "onCommand:extension.updateActiveRepository",
     "onCommand:hostExplorer.make",
     "onCommand:hostExplorer.exec",
     "onCommand:hostExplorer.getRepositoryContents",
@@ -89,10 +89,6 @@
         {
           "command": "hostExplorer.get",
           "when": "view == hostView && viewItem == content"
-        },
-        {
-          "command": "hostExplorer.put",
-          "when": "view == hostView && viewItem == content"
         }
       ]
     },
@@ -130,11 +126,7 @@
         }
       },
       {
-        "command": "extension.updateCurrentRegion",
-        "title": "CICS Region"
-      },
-      {
-        "command": "extension.updateCurrentRepository",
+        "command": "extension.updateActiveRepository",
         "title": "Repository"
       }
     ],
@@ -189,71 +181,14 @@
             }
           }
         },        
-        "hostbridge.host": {
-          "type": "string",
-          "default": "",
-          "description": "Specifies the machine name or IP address of the host."
-        },
-        "hostbridge.userid": {
-          "type": "string",
-          "default": "",
-          "description": "Specifies the CESN/RACF userid to login with."
-        },
-        "hostbridge.regions": {
-          "type": "array",
-          "description": "All available CICS Regions.",
-          "items": {
-            "type": "object",
-            "title": "CICS Region",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "CICS Region Name"
-              },
-              "port": {
-                "type": "number",
-                "description": "CICS Region Port#"
-              }
-            }
-          }
-        },
-        "hostbridge.currentRegion": {
+        "hostbridge.activeRepository": {
           "type": "object",
-          "description": "Specifies the current CICS Region.",
-          "title": "Current CICS Region",
+          "description": "Specifies the active repository.",
+          "title": "Active Repository",
           "properties": {
             "name": {
               "type": "string",
-              "description": "CICS Region Name"
-            },
-            "port": {
-              "type": "number",
-              "description": "CICS Region Port#"
-            }
-          }
-        },
-        "hostbridge.repositories": {
-          "type": "array",
-          "description": "All available repositories.",
-          "items": {
-            "type": "object",
-            "title": "Repository",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Repository Name"
-              }
-            }
-          }
-        },
-        "hostbridge.currentRepository": {
-          "type": "object",
-          "description": "Specifies the current repository.",
-          "title": "Current Repository",
-          "properties": {
-            "name": {
-              "type": "string",
-              "description": "Repository Name"
+              "description": "Fully qualified repository name (host\\region\\repo)"
             }
           }
         }
