@@ -2,8 +2,13 @@
   "name": "hostbridge",
   "displayName": "Hostbridge for VSCode",
   "description": "Adds a GUI for retrieving, uploading, compiling, and executing hostbridge scripts",
-  "version": "0.6.0",
-  "enableProposedApi": true,
+  "version": "0.6.1",
+  "publisher": "vs-publisher-126251",
+  "repository": {
+		"type": "git",
+		"url": "https://github.com/KennethScott/hostbridge"
+	},
+  "enableProposedApi": false,
   "engines": {
     "vscode": "^1.34.0"
   },
@@ -25,11 +30,20 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "views": {
-      "explorer": [
+    "viewsContainers": {
+      "activitybar": [
         {
           "id": "hostView",
-          "name": "Host Explorer"
+          "title": "Host Explorer",
+          "icon": "resources/hostbridge-white.png"
+        }
+      ]
+    },
+    "views": {
+      "hostView": [
+        {
+          "id": "hostView",
+          "name": ""
         }
       ]
     },

@@ -25,16 +25,16 @@ This extension contributes the following settings:
 ## Known Issues
 
 Doesn't prompt to set hosts on first load
+
 Doesn't support processing multiple scripts at once
 
 ## Release Notes
 
 Continuing to work toward fully stable 1.0 version of the extension.
 
-### 0.6.0
+### 0.6.1
 
-Reworked settings to allow for multiple hosts.  Userid is also now set per region.
-
+Changed view from explorer to actionbar and added hostbridge icon
 
 
 -----------------------------------------------------------------------------------------------------------
