@@ -48,7 +48,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 	}
 
 	async getRepositoryContents(repoNode: HostTreeItem): Promise<HostTreeItem[]> {
-		let response: any = {};
+
 		let children: HostTreeItem[] = [];
 
 		let targetRepo = {
@@ -86,9 +86,8 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 
 			const result = await request.post(options)
 				.then((body) => {
-					response = body;
 					let parser = new xml2js.Parser();
-					parser.parseString(response, function (err, result) {
+					parser.parseString(body, function (err, result) {
 						if (result.hbjs_listing.resource[0].entry) {
 							result.hbjs_listing.resource[0].entry.sort((a: any, b: any) => a.$.name.localeCompare(b.$.name));
 							result.hbjs_listing.resource[0].entry.forEach(entry => {
@@ -98,17 +97,15 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 							});
 						}
 					});
+					console.log(body);
 				})
 				.catch((err) => {
 					if (err.statusCode === 401) {
 						utils.setPassword(targetRepo, "");
 						vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
 					}
-					response = err;
-				})
-				.finally(() => {
-					utils.getOutputChannel().appendLine(response);
-					utils.getOutputChannel().show(true);
+					utils.getOutputChannel().appendLine(err);
+					utils.getOutputChannel().show();
 				});
 
 		}
@@ -271,7 +268,7 @@ export class HostExplorer {
 							})
 							.finally(() => {
 								utils.getOutputChannel().appendLine(response);
-								utils.getOutputChannel().show(true);
+								utils.getOutputChannel().show();
 							});
 					}
 
@@ -335,7 +332,7 @@ export class HostExplorer {
 						vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
 					}
 					utils.getOutputChannel().appendLine(err);
-					utils.getOutputChannel().show(true);
+					utils.getOutputChannel().show();
 				});
 
 		}
@@ -394,7 +391,7 @@ export class HostExplorer {
 					})
 					.finally(() => {
 						utils.getOutputChannel().appendLine(response);
-						utils.getOutputChannel().show(true);
+						utils.getOutputChannel().show();
 					});
 
 			}
@@ -453,7 +450,7 @@ export class HostExplorer {
 					})
 					.finally(() => {
 						utils.getOutputChannel().appendLine(response);
-						utils.getOutputChannel().show(true);
+						utils.getOutputChannel().show();
 					});
 
 			}
@@ -511,9 +508,9 @@ export class HostExplorer {
 						response = err;
 					})
 					.finally(() => {
-						//console.log(response);		
 						utils.getOutputChannel().appendLine(response);
-						utils.getOutputChannel().show(true);
+						utils.getOutputChannel().appendLine(">>> End of Response: " + new Date().toLocaleString());					
+						utils.getOutputChannel().show();
 					});
 			}
 
