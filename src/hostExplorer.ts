@@ -66,24 +66,6 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 				action: "LIST2", password: password, filename: "*"
 			});
 
-			//#region get repository listing
-			//POST https://host:port/repository/mscript HTTP/1.1
-			//X-HB-ACTION: LIST2
-			//X-HB-ACTION-TARGET: *
-			//X-HB-PLUGIN-VERSION: 201702011429
-			//X-HB-DEFAULT-REPOSITORY: repository
-			//Authorization: Basic ===
-			//X-HB-TRANSLATE: text
-			//Cache-Control: no-cache
-			//Pragma: no-cache
-			//User-Agent: Java/1.8.0_201
-			//Host: host:port
-			//Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
-			//Connection: keep-alive
-			//Content-type: application/x-www-form-urlencoded
-			//Content-Length: 56
-			//#endregion
-
 			const result = await request.post(options)
 				.then((body) => {
 					let parser = new xml2js.Parser();
@@ -239,21 +221,6 @@ export class HostExplorer {
 							action: "DELETE", password: password, filename: contentNode.label
 						});
 
-						//#region delete script
-						//DELETE https://host:port/repository/Test3 HTTP/1.1
-						//X-HB-ACTION: DELETE
-						//X-HB-ACTION-TARGET: Test3
-						//X-HB-PLUGIN-VERSION: 201702011429
-						//X-HB-DEFAULT-REPOSITORY: repository
-						//Authorization: Basic ===
-						//Cache-Control: no-cache
-						//Pragma: no-cache
-						//User-Agent: Java/1.8.0_201
-						//Host: host:port
-						//Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
-						//Connection: keep-alive
-						//#endregion
-
 						const result = await request.post(options)
 							.then((body) => {
 								response = body;
@@ -295,24 +262,6 @@ export class HostExplorer {
 				action: "GET", password: password, filename: contentNode.label,
 				resolveWithFullResponse: true
 			});
-
-			//#region get script
-			//POST https://host:port/repository/mscript HTTP/1.1
-			//X-HB-ACTION: GET
-			//X-HB-ACTION-TARGET: CdoDepCesaInq
-			//X-HB-PLUGIN-VERSION: 201702011429
-			//X-HB-DEFAULT-REPOSITORY: repository
-			//Authorization: Basic ===
-			//X-HB-TRANSLATE: text
-			//Cache-Control: no-cache
-			//Pragma: no-cache
-			//User-Agent: Java/1.8.0_201
-			//Host: host:port
-			//Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
-			//Connection: keep-alive
-			//Content-type: application/x-www-form-urlencoded
-			//Content-Length: 54
-			//#endregion
 
 			const result = await request.post(options)
 				.then((response) => {
@@ -359,24 +308,6 @@ export class HostExplorer {
 					action: "MAKE", password: password, filename: hbFile.filename, contents: hbFile.contents
 				});
 
-				//#region MAKE Headers 
-				// POST https://host:port/repository/mscript HTTP/1.1
-				// X-HB-ACTION: MAKE
-				// X-HB-ACTION-TARGET: Test3.hbx
-				// X-HB-PLUGIN-VERSION: 201702011429
-				// X-HB-DEFAULT-REPOSITORY: repository
-				// Authorization: Basic ---
-				// Content-type: text/plain
-				// X-HB-TRANSLATE: text
-				// Cache-Control: no-cache
-				// Pragma: no-cache
-				// User-Agent: Java/1.8.0_201
-				// Host: host:port
-				// Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
-				// Connection: keep-alive
-				// Content-Length: 994
-				//#endregion
-
 				const result = await request.post(options)
 					.then((body) => {
 						response = body;
@@ -417,24 +348,6 @@ export class HostExplorer {
 					targetRepo: activeRepo,
 					action: "PUT", password: password, filename: hbFile.filename, contents: hbFile.contents
 				});
-
-				//#region PUT Headers 
-				// PUT https://host:port/repo/Test3.hbx HTTP/1.1
-				// X-HB-ACTION: PUT
-				// X-HB-ACTION-TARGET: Test3.hbx
-				// X-HB-PLUGIN-VERSION: 201702011429
-				// X-HB-DEFAULT-REPOSITORY: repo
-				// Authorization: Basic ==
-				// Content-type: text/plain
-				// X-HB-TRANSLATE: text
-				// Cache-Control: no-cache
-				// Pragma: no-cache
-				// User-Agent: Java/1.8.0_201
-				// Host: host:port
-				// Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
-				// Connection: keep-alive
-				// Content-Length: 913
-				//#endregion
 
 				const result = await request.post(options)
 					.then((body) => {
