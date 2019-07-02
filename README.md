@@ -7,6 +7,9 @@ Please note this extension is still considered beta.
 ## Disclaimer
 This is an unofficial HostBridge extension.  I am not affiliated with [HostBridge](http://www.hostbridge.com).
 
+## Credits
+For now the handful of file icons are from Philipp Kief's excellent [Material Icons Theme](https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme).
+
 ## Features
 
 ..coming soon..
