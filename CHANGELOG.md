@@ -1,6 +1,10 @@
 # Change Log
 
 
+### 0.6.2 (2019-07-02)
+* Cleaned up the output channel so it's not so noisy
+
+
 ### 0.6.1 (2019-07-01)
 * Can now set Active Repository from Host Explorer
 * Moved view from explorer to actionbar and added hostbridge icon
