@@ -1,6 +1,10 @@
 # Change Log
 
 
+### 0.6.3 (2019-07-02)
+* Added last updated by userid and date/time to host repository content item tooltip
+
+
 ### 0.6.2 (2019-07-02)
 * Cleaned up the output channel so it's not so noisy
 

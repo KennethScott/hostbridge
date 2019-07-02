@@ -74,7 +74,8 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 							result.hbjs_listing.resource[0].entry.sort((a: any, b: any) => a.$.name.localeCompare(b.$.name));
 							result.hbjs_listing.resource[0].entry.forEach(entry => {
 								let contentNode = new HostTreeItem(entry.$.name, 'content', vscode.TreeItemCollapsibleState.None, [], repoNode);
-								contentNode.tooltip = `${targetRepo.region}\\${repoNode.label}\\${entry.$.name}`;
+								let formattedDateTime = utils.formatHostDateTime(entry.$.updated_on);
+								contentNode.tooltip = `${targetRepo.region}\\${repoNode.label}\\${entry.$.name} (${entry.$.updated_by} on ${formattedDateTime})`;
 								children.push(contentNode);
 							});
 						}

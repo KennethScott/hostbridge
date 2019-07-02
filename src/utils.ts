@@ -112,7 +112,16 @@ export module utils {
 			region: pieces[1],
 			repository: pieces[2]
 		};
-
 	}
+	
+	/**
+	 * Formats the raw host datetime CCYYMMDDHHMMSS into CCYY/MM/DD HH:MM:SS
+	 * @param dateTime Raw unformatted 8-digit date and 6-digit time with no delimiters (CCYYMMDDHHMMSS)
+	 */
+	export function formatHostDateTime(dateTime:string) {
+		//updated_on:"20190411093844";		
+		return dateTime.substr(0,4) + "/" + dateTime.substr(4,2) + "/" + dateTime.substr(6,2) + " " + dateTime.substr(8,2) + ":" + dateTime.substr(10,2) + ":" + dateTime.substr(12,2);
+	}
+
 	// find a sort extension..
 }
