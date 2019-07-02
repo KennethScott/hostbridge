@@ -103,6 +103,10 @@
         {
           "command": "hostExplorer.get",
           "when": "view == hostView && viewItem == content"
+        },
+        {
+          "command": "extension.updateActiveRepository",
+          "when": "view == hostView && viewItem == repository"
         }
       ]
     },
@@ -141,7 +145,7 @@
       },
       {
         "command": "extension.updateActiveRepository",
-        "title": "Repository"
+        "title": "Set Active Repository"
       }
     ],
     "configuration": {

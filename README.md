@@ -37,7 +37,7 @@ Continuing to work toward fully stable 1.0 version of the extension.
 
 ### 0.6.1
 
-Changed view from explorer to actionbar and added hostbridge icon
+Changed view from explorer to actionbar and added hostbridge icon.  Can also now set Active Repository from Host Explorer.
 
 
 -----------------------------------------------------------------------------------------------------------

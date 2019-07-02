@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.1] - 2019-07-01
 ### Added
-- Nothing
+- Can now set Active Repository from Host Explorer
 
 ### Changed
 - Moved view from explorer to actionbar and added hostbridge icon
