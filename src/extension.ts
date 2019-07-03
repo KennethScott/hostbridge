@@ -12,7 +12,8 @@ export function activate(context: vscode.ExtensionContext) {
 	setupStatusBarItem(context.subscriptions);
 	updateStatusBarItem();
 
-	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateStatusBarItem));
+	// this will drive you crazy if you're not watching... it sounded great in theory... reimplement better later..
+	//context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateStatusBarItem));
 
 	context.subscriptions.push(vscode.commands.registerCommand('extension.updateActiveRepository', async (hostTreeItem:HostTreeItem|undefined) => {
 		
