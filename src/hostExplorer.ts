@@ -291,6 +291,10 @@ export class HostExplorer {
 
 	private async make(uri: vscode.Uri, treeDataProvider: HostTreeDataProvider) {
 
+		if (uri.fsPath === vscode.window.activeTextEditor.document.uri.fsPath) {
+			await vscode.window.activeTextEditor.document.save();
+		}
+
 		let activeRepo:any = utils.getActiveRepository();
 
 		if (activeRepo) {
@@ -332,6 +336,10 @@ export class HostExplorer {
 	}
 
 	private async put(uri: vscode.Uri, treeDataProvider: HostTreeDataProvider) {
+
+		if (uri.fsPath === vscode.window.activeTextEditor.document.uri.fsPath) {
+			await vscode.window.activeTextEditor.document.save();
+		}
 
 		let activeRepo:any = utils.getActiveRepository();
 
@@ -377,6 +385,10 @@ export class HostExplorer {
 		// This doesn't return what you'd expect...
 		// ????  let xxx:HostTreeItem[] = this.hostView.selection;
 
+		if (uri.fsPath === vscode.window.activeTextEditor.document.uri.fsPath) {
+			await vscode.window.activeTextEditor.document.save();
+		}
+
 		let activeRepo:any = utils.getActiveRepository();
 
 		if (activeRepo) {
@@ -393,24 +405,6 @@ export class HostExplorer {
 					targetRepo: activeRepo,
 					action: "RUN", password: password, filename: hbFile.filename, contents: hbFile.contents
 				});
-
-				//#region RUN (Exec) Headers 
-				// POST /repository/mscript HTTP/1.1
-				// X-HB-ACTION: RUN
-				// X-HB-ACTION-TARGET: Test3.hbx
-				// X-HB-PLUGIN-VERSION: 201702011429
-				// X-HB-DEFAULT-REPOSITORY: repository
-				// Authorization: Basic ---
-				// Content-type: text/plain
-				// X-HB-TRANSLATE: text
-				// Cache-Control: no-cache
-				// Pragma: no-cache
-				// User-Agent: Java/1.8.0_201
-				// Host: host:port
-				// Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
-				// Connection: keep-alive
-				// Content-Length: 979
-				//#endregion
 
 				const result = await request.post(options)
 					.then((body) => { response = body; })
