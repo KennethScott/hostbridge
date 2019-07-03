@@ -2,7 +2,7 @@
   "name": "hostbridge",
   "displayName": "Hostbridge for VSCode",
   "description": "Adds a GUI for retrieving, uploading, compiling, and executing hostbridge scripts",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "publisher": "vs-publisher-126251",
   "repository": {
 		"type": "git",
@@ -209,6 +209,15 @@
               "description": "Fully qualified repository name (host\\region\\repo)"
             }
           }
+        },
+        "hostbridge.tempFolderRoot": {
+          "type": "string",
+          "description": "If not set, defaults to current workspace folder."
+        },
+        "hostbridge.tempFolderName": {
+          "type": "string",
+          "default": "HostBridge\\tempFiles",
+          "description": "Folder name(s) to append to the tempFolderRoot path to use for saving downloaded scripts."
         }
       }
     }
