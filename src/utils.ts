@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import { UriOptions } from 'request';
 import { statusbarRepository } from "./statusBarHelper";
+import * as fs from 'fs';
+import * as path from 'path';
 
 export module utils {
 
@@ -32,6 +34,31 @@ export module utils {
 	export function setPassword(targetRepo:any, val: string|undefined) {
 		let hostAndRegion = targetRepo.host + ":" + targetRepo.region;
 		passwords[hostAndRegion] = val;
+	}
+
+	export function openHostContent(filename:string, content:string) {
+
+		// use config setting for temp root if provided.  otherwise default to workspace
+		let tempFolderRoot:string = vscode.workspace.getConfiguration('hostbridge').get('tempFolderRoot') ||
+									vscode.workspace.workspaceFolders[0].uri.fsPath;
+		
+		if (tempFolderRoot) {
+
+			// can be something.. can be nothing..  defaults via package.json to HostBridge\tempFiles.
+			let tempFolderName:string = vscode.workspace.getConfiguration('hostbridge').get('tempFolderName') || "";
+
+			let pathAndFilename = path.join(tempFolderRoot, tempFolderName, filename);
+			fs.writeFileSync(pathAndFilename, content);
+
+			const finalUri = vscode.Uri.file(pathAndFilename);
+			vscode.workspace.openTextDocument(finalUri).then((doc) => {
+				vscode.window.showTextDocument(doc, {preview: false});
+			});
+		}
+		else {
+			vscode.window.showInformationMessage('Temp folder could not be determined.  Opening virtually.  Set tempFolderRoot setting to allow saving to disk.');
+			openNewNamedVirtualDoc(filename, content);
+		}
 	}
 
 	export function openNewNamedVirtualDoc(filename: string, content: string) {

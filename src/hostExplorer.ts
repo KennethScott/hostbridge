@@ -273,7 +273,7 @@ export class HostExplorer {
 						filename = contentNode.label + '.hbx';
 					}
 
-					utils.openNewNamedVirtualDoc(filename, response.body);
+					utils.openHostContent(filename, response.body);
 
 				})
 				.catch((err) => {
