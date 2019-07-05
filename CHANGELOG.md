@@ -1,12 +1,17 @@
 # Change Log
 
 
+### 0.7.0 (2019-07-04)
+* Fix: Added HostBridge-specific encoding for file contents sent to host
+
+
 ### 0.6.4 (2019-07-02)
 * Changed Get option to save to disk instead of opening virtual unsaved file.  Two new settings also added to 
 allow user to specify both the temp folder root and the temp folder name(s) to save to.
 * Disabled feature that would automatically attempt to set the Active Repository every time the active editor changed.
 It was driving me crazy...  great in theory, but have to find a better implementation..
 * Added autosave feature when doing make/exec/put
+
 
 ### 0.6.3 (2019-07-02)
 * Added last updated by userid and date/time to host repository content item tooltip

@@ -2,7 +2,7 @@
   "name": "hostbridge",
   "displayName": "Hostbridge for VSCode",
   "description": "Adds a GUI for retrieving, uploading, compiling, and executing hostbridge scripts",
-  "version": "0.6.4",
+  "version": "0.7.0",
   "publisher": "vs-publisher-126251",
   "repository": {
 		"type": "git",

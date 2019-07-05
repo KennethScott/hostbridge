@@ -113,7 +113,7 @@ export module utils {
 		};
 
 		if (o.contents) {
-			options.body = o.contents;
+			options.body = encodeData(o.contents);
 		}
 
 		if (method !== 'DELETE') {
@@ -150,5 +150,38 @@ export module utils {
 		return dateTime.substr(0,4) + "/" + dateTime.substr(4,2) + "/" + dateTime.substr(6,2) + " " + dateTime.substr(8,2) + ":" + dateTime.substr(10,2) + ":" + dateTime.substr(12,2);
 	}
 
+	/**
+	 * Convert data to Hostbridge-specific encoding
+	 * @param data file contents to be encoded
+	 */
+	function encodeData(data:string): string {
+		//StringBuffer buf = new StringBuffer(data.length() * 2);
+		let buf:string = "";
+		let ch:string = "";
+
+		for (let i = 0; i < data.length; i++) {
+			ch = data.charAt(i);
+
+		  	if (ch === '\t' || ch === '\n') {
+				buf += ch;
+			} 
+			else if (ch < ' ' || ch > '~' || ch === '+' || ch === '%') {
+				buf += '%';
+				let hex:string = ch.charCodeAt(0).toString(16);
+				if (hex.length === 1) {
+					  buf += '0'; 
+				}
+				buf += (hex.toUpperCase());
+		  	}
+		  	else if (ch === ' ') {
+				buf += '+';
+		  	} else {
+				buf += ch;
+		  	} 
+		} 
+
+		return buf;
+	  }
+	
 	// find a sort extension..
 }
