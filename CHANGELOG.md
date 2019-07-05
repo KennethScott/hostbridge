@@ -1,6 +1,10 @@
 # Change Log
 
 
+### 0.7.1 (2019-07-05)
+* Fix: Added line-break at the end of hostbridge script content (prior to save command)
+
+
 ### 0.7.0 (2019-07-04)
 * Fix: Added HostBridge-specific encoding for file contents sent to host
 
