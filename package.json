@@ -212,12 +212,14 @@
         },
         "hostbridge.tempFolderRoot": {
           "type": "string",
+          "title": "Temp Folder Root",
           "description": "If not set, defaults to current workspace folder."
         },
         "hostbridge.tempFolderName": {
           "type": "string",
+          "title": "Temp Folder Name",
           "default": "HostBridge\\tempFiles",
-          "description": "Folder name(s) to append to the tempFolderRoot path to use for saving downloaded scripts."
+          "description": "Folder name relative to Temp Folder Root to use for saving downloaded scripts."
         }
       }
     }
