@@ -307,7 +307,7 @@ export class HostExplorer {
 
 				let hbFile = new FileParser(uri);
 
-				hbFile.contents += "save as " + hbFile.filename.replace(".hbx", "");
+				hbFile.contents += "\n" + "save as " + hbFile.filename.replace(".hbx", "");
 				let options: UriOptions = utils.getHttpOptions({
 					targetRepo: activeRepo,
 					action: "MAKE", password: password, filename: hbFile.filename, contents: hbFile.contents
