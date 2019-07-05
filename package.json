@@ -200,15 +200,9 @@
           }
         },        
         "hostbridge.activeRepository": {
-          "type": "object",
-          "description": "Specifies the active repository.",
           "title": "Active Repository",
-          "properties": {
-            "name": {
-              "type": "string",
-              "description": "Fully qualified repository name (host\\region\\repo)"
-            }
-          }
+          "type": "string",
+           "description": "Fully qualified name of the active repository (host\\region\\repo)"
         },
         "hostbridge.tempFolderRoot": {
           "type": "string",

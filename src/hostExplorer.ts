@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import { utils } from "./utils";
-import { statusbarRepository } from "./statusBarHelper";
 import { UriOptions } from 'request';
 import * as request from 'request-promise-native';
 import * as xml2js from 'xml2js';
