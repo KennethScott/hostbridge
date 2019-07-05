@@ -1,6 +1,10 @@
 # Change Log
 
 
+### 0.7.2 (2019-07-05)
+* Reworked Active Repository status bar item behavior.  Now properly saves between sessions.
+
+
 ### 0.7.1 (2019-07-05)
 * Fix: Added line-break at the end of hostbridge script content (prior to save command)
 
