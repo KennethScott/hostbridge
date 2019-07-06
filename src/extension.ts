@@ -18,6 +18,10 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand('extension.updateActiveRepository', async (hostTreeItem:HostTreeItem|undefined) => {		
 		statusBarHelper.updateStatusBarItem(hostTreeItem);
 	}));
+
+	if (!vscode.workspace.getConfiguration('hostbridge').hosts) {
+		vscode.window.showInformationMessage('No hosts found.  Please specify hosts via Settings\\Extensions\\HostBridge.');
+	}
 }
 
 export function deactivate() {}
