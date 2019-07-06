@@ -24,10 +24,6 @@ This extension contributes the following settings:
 
 * `hostbridge.hosts`: The available hosts and their respective regions and repositories
 * `hostbridge.activeRepository`: The currently selected hostbridge repository
-
-## Known Issues
-
-Doesn't prompt to set hosts on first load
-
-Doesn't support processing multiple scripts at once
+* `hostbridge.tempFolderRoot`: If not set, defaults to current workspace folder
+* `hostbridge.tempFolderName`: Folder name relative to Temp Folder Root to use for saving downloaded content (defaults to HostBridge\tempFiles)
 
