@@ -1,6 +1,10 @@
 # Change Log
 
 
+### 0.7.3 (2019-07-05)
+* Added notification if no hosts found in settings.
+
+
 ### 0.7.2 (2019-07-05)
 * Reworked Active Repository status bar item behavior.  Now properly saves between sessions.
 
