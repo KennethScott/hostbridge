@@ -5,9 +5,9 @@
   "version": "0.7.3",
   "publisher": "vs-publisher-126251",
   "repository": {
-		"type": "git",
-		"url": "https://github.com/KennethScott/hostbridge"
-	},
+    "type": "git",
+    "url": "https://github.com/KennethScott/hostbridge"
+  },
   "enableProposedApi": false,
   "engines": {
     "vscode": "^1.34.0"
@@ -170,8 +170,8 @@
                   "type": "object",
                   "properties": {
                     "name": {
-                        "type": "string",
-                        "description": "CICS Region Name"
+                      "type": "string",
+                      "description": "CICS Region Name"
                     },
                     "port": {
                       "type": "number",
@@ -198,11 +198,11 @@
               }
             }
           }
-        },        
+        },
         "hostbridge.activeRepository": {
           "title": "Active Repository",
           "type": "string",
-           "description": "Fully qualified name of the active repository (host\\region\\repo)"
+          "description": "Fully qualified name of the active repository (host\\region\\repo)"
         },
         "hostbridge.tempFolderRoot": {
           "type": "string",
@@ -229,7 +229,7 @@
     "@types/mocha": "^2.2.42",
     "@types/node": "^10.12.21",
     "tslint": "^5.17.0",
-    "typescript": "^3.3.1",
+    "typescript": "^3.5.2",
     "vscode": "^1.1.34"
   },
   "dependencies": {
