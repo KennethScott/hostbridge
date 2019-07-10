@@ -27,3 +27,6 @@ This extension contributes the following settings:
 * `hostbridge.tempFolderRoot`: If not set, defaults to current workspace folder
 * `hostbridge.tempFolderName`: Folder name relative to Temp Folder Root to use for saving downloaded content (defaults to HostBridge\tempFiles)
 
+## License
+
+[Apache 2.0](LICENSE)
