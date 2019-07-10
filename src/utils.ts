@@ -6,6 +6,15 @@ import * as path from 'path';
 
 export module utils {
 
+	let config:vscode.WorkspaceConfiguration;
+	export function getConfig(): vscode.WorkspaceConfiguration {
+		if (!config) {
+			config = vscode.workspace.getConfiguration('hostbridge');
+		}
+		return config;
+	}
+	export function resetConfig() { config = null; }
+
 	let channel: vscode.OutputChannel;
 	export function getOutputChannel(): vscode.OutputChannel {
 		if (!channel) {
@@ -39,13 +48,13 @@ export module utils {
 	export function openHostContent(filename:string, content:string) {
 
 		// use config setting for temp root if provided.  otherwise default to workspace
-		let tempFolderRoot:string = vscode.workspace.getConfiguration('hostbridge').get('tempFolderRoot') ||
+		let tempFolderRoot:string = getConfig().get('tempFolderRoot') ||
 									vscode.workspace.workspaceFolders[0].uri.fsPath;
 		
 		if (tempFolderRoot) {
 
 			// can be something.. can be nothing..  defaults via package.json to HostBridge\tempFiles.
-			let tempFolderName:string = vscode.workspace.getConfiguration('hostbridge').get('tempFolderName') || "";
+			let tempFolderName:string = getConfig().get('tempFolderName') || "";
 
 			let pathAndFilename = path.join(tempFolderRoot, tempFolderName, filename);
 			fs.writeFileSync(pathAndFilename, content);
@@ -88,9 +97,7 @@ export module utils {
 	/// action = MAKE or RUN
 	export function getHttpOptions(o:any): UriOptions {
 
-		let config = vscode.workspace.getConfiguration('hostbridge');	
-
-		let host = config.hosts.find(x => x.name === o.targetRepo.host);
+		let host = getConfig().hosts.find(x => x.name === o.targetRepo.host);
 		let region = host.regions.find(x => x.name === o.targetRepo.region);
 
 		let method:any = HbActionsToMethods[o.action];
@@ -155,7 +162,7 @@ export module utils {
 	 * @param data file contents to be encoded
 	 */
 	function encodeData(data:string): string {
-		//StringBuffer buf = new StringBuffer(data.length() * 2);
+
 		let buf:string = "";
 		let ch:string = "";
 

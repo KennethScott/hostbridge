@@ -6,8 +6,6 @@ import * as xml2js from 'xml2js';
 import * as path from 'path';
 import { FileParser } from "./fileParser";
 
-let config = vscode.workspace.getConfiguration('hostbridge');
-
 export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeItem> {
 
 	private _onDidChangeTreeData: vscode.EventEmitter<HostTreeItem> = new vscode.EventEmitter<HostTreeItem>();
@@ -98,7 +96,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 	getHosts(): HostTreeItem[] {
 		let hosts: HostTreeItem[] = [];
 
-		vscode.workspace.getConfiguration('hostbridge').hosts.forEach((host: any) => {
+		utils.getConfig().hosts.forEach((host: any) => {
 			let hostNode = new HostTreeItem(host.name, 'host', vscode.TreeItemCollapsibleState.Collapsed, []);
 			hosts.push(hostNode);
 		});
@@ -112,7 +110,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 
 		let regions: HostTreeItem[] = [];
 
-		let host = config.hosts.find(x => x.name === hostNode.label);
+		let host = utils.getConfig().hosts.find(x => x.name === hostNode.label);
 
 		host.regions.forEach((region: any) => {
 			let regionNode = new HostTreeItem(region.name, 'region', vscode.TreeItemCollapsibleState.Collapsed, [], hostNode);
@@ -126,7 +124,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 
 	getRepositories(regionNode: HostTreeItem): HostTreeItem[] {
 
-		let host = config.hosts.find(x => x.name === regionNode.parent.label);
+		let host = utils.getConfig().hosts.find(x => x.name === regionNode.parent.label);
 
 		let region = host.regions.find(x => x.name === regionNode.label);
 
