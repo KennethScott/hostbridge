@@ -1,6 +1,10 @@
 # Change Log
 
 
+### 0.8.0 (2019-07-10)
+* Setting changes are now detected and the repository browser will automatically refresh to changes.  
+
+
 ### 0.7.3 (2019-07-05)
 * Added notification if no hosts found in settings.
 
