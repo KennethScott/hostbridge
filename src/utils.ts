@@ -5,6 +5,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { config } from "./config";
 
+export class Repository {
+
+	public host:string;
+	public region:string;
+	public repository:string;
+
+	constructor(host:string, region:string, repository:string) {
+		this.host = host;
+		this.region = region;
+		this.repository = repository;
+	}
+}
+
 export module utils {
 
 
@@ -18,7 +31,7 @@ export module utils {
 
 
 	let passwords: []|undefined = [];
-	export async function getPassword(targetRepo:any) {
+	export async function getPassword(targetRepo:Repository) {
 
 		let hostAndRegion = `${targetRepo.host}:${targetRepo.region}`;
 
@@ -131,18 +144,14 @@ export module utils {
 	}	
 
 
-	export function getActiveRepository() {
+	export function getActiveRepository(): Repository {
 		let pieces = statusbarRepository.text.split("\\");
 
 		if (pieces.length !== 3) {
 		 	vscode.commands.executeCommand('extension.updateActiveRepository');
 		}
 
-		return {
-			host: pieces[0],
-			region: pieces[1],
-			repository: pieces[2]
-		};
+		return new Repository(pieces[0], pieces[1], pieces[2]);
 	}
 	
 

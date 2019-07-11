@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { utils } from "./utils";
+import { utils, Repository } from "./utils";
 import { UriOptions } from 'request';
 import * as request from 'request-promise-native';
 import * as xml2js from 'xml2js';
@@ -49,11 +49,11 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 
 		let children: HostTreeItem[] = [];
 
-		let targetRepo = {
-			host: repoNode.parent.parent.label,
-			region: repoNode.parent.label,
-			repository: repoNode.label
-		};
+		let targetRepo = new Repository(
+			repoNode.parent.parent.label,
+			repoNode.parent.label,
+			repoNode.label
+		);
 
 		let password = await utils.getPassword(targetRepo);
 
@@ -199,11 +199,11 @@ export class HostExplorer {
 
 					let response: any = {};
 
-					let targetRepo = {
-						host: contentNode.parent.parent.parent.label,
-						region: contentNode.parent.parent.label,
-						repository: contentNode.parent.label
-					};
+					let targetRepo = new Repository(
+						contentNode.parent.parent.parent.label,
+						contentNode.parent.parent.label,
+						contentNode.parent.label
+					);
 
 					let password = await utils.getPassword(targetRepo);
 
@@ -240,11 +240,11 @@ export class HostExplorer {
 
 	private async get(contentNode: HostTreeItem) {
 
-		let targetRepo = {
-			host: contentNode.parent.parent.parent.label,
-			region: contentNode.parent.parent.label,
-			repository: contentNode.parent.label
-		};
+		let targetRepo = new Repository(
+			contentNode.parent.parent.parent.label,
+			contentNode.parent.parent.label,
+			contentNode.parent.label
+		);
 
 		let password = await utils.getPassword(targetRepo);
 
