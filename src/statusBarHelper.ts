@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { utils } from "./utils";
 import { QuickPickItem } from 'vscode';
 import { HostTreeItem } from './hostExplorer';
+import { config } from "./config";
 
 export let statusbarRepository: vscode.StatusBarItem;
 const ACTIVE_REPOSITORY_NOT_SET:string = "SET ACTIVE REPOSITORY";
@@ -9,7 +9,7 @@ const ACTIVE_REPOSITORY_NOT_SET:string = "SET ACTIVE REPOSITORY";
 export function setupStatusBarItem(subscriptions:any) {
 	this.statusbarRepository = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
 	this.statusbarRepository.command = 'extension.updateActiveRepository';
-	let activeRepository = utils.getConfig().activeRepository;
+	let activeRepository = config.get().activeRepository;
 	this.statusbarRepository.text = (!activeRepository) ? ACTIVE_REPOSITORY_NOT_SET : activeRepository;
 	this.statusbarRepository.show();
 	subscriptions.push(this.statusbarRepository);
@@ -47,7 +47,7 @@ export async function updateStatusBarItem(hostTreeItem:HostTreeItem|undefined) {
 
 		let repositories:QuickPickItem[] = [];
 	
-		utils.getConfig().hosts.forEach((host:any) => {
+		config.getHosts().forEach((host:any) => {
 			host.regions.forEach((region:any) => {
 				region.repositories.forEach((repository:any) => {
 					repositories.push({ label: host.name + "\\" + region.name + "\\" + repository});

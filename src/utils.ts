@@ -3,17 +3,10 @@ import { UriOptions } from 'request';
 import { statusbarRepository } from "./statusBarHelper";
 import * as fs from 'fs';
 import * as path from 'path';
+import { config } from "./config";
 
 export module utils {
 
-	let config:vscode.WorkspaceConfiguration;
-	export function getConfig(): vscode.WorkspaceConfiguration {
-		if (!config) {
-			config = vscode.workspace.getConfiguration('hostbridge');
-		}
-		return config;
-	}
-	export function resetConfig() { config = null; }
 
 	let channel: vscode.OutputChannel;
 	export function getOutputChannel(): vscode.OutputChannel {
@@ -32,7 +25,7 @@ export module utils {
 		if (!passwords[hostAndRegion]) {
 			passwords[hostAndRegion] = await vscode.window.showInputBox({
 				password: true,
-				prompt: "Please enter your CESN/RACF password.",	
+				prompt: "Please enter password for ",	
 				validateInput: text => {
 					return text.length === 0 ? 'Password is required!' : null;
 				},
@@ -45,16 +38,17 @@ export module utils {
 		passwords[hostAndRegion] = val;
 	}
 
+
 	export function openHostContent(filename:string, content:string) {
 
 		// use config setting for temp root if provided.  otherwise default to workspace
-		let tempFolderRoot:string = getConfig().get('tempFolderRoot') ||
+		let tempFolderRoot:string = config.get().get('tempFolderRoot') ||
 									vscode.workspace.workspaceFolders[0].uri.fsPath;
 		
 		if (tempFolderRoot) {
 
 			// can be something.. can be nothing..  defaults via package.json to HostBridge\tempFiles.
-			let tempFolderName:string = getConfig().get('tempFolderName') || "";
+			let tempFolderName:string = config.get().get('tempFolderName') || "";
 
 			let pathAndFilename = path.join(tempFolderRoot, tempFolderName, filename);
 			fs.writeFileSync(pathAndFilename, content);
@@ -69,6 +63,7 @@ export module utils {
 			openNewNamedVirtualDoc(filename, content);
 		}
 	}
+
 
 	export function openNewNamedVirtualDoc(filename: string, content: string) {
 		let uri: vscode.Uri = vscode.Uri.parse("untitled:" + filename);
@@ -94,11 +89,12 @@ export module utils {
 		'PUT': 'PUT'
 	};
 
+
 	/// action = MAKE or RUN
 	export function getHttpOptions(o:any): UriOptions {
 
-		let host = getConfig().hosts.find(x => x.name === o.targetRepo.host);
-		let region = host.regions.find(x => x.name === o.targetRepo.region);
+		let host = config.getHost(o.targetRepo.host);
+		let region = config.getRegion(o.targetRepo.host, o.targetRepo.region);
 
 		let method:any = HbActionsToMethods[o.action];
 
@@ -134,6 +130,7 @@ export module utils {
 		return options;
 	}	
 
+
 	export function getActiveRepository() {
 		let pieces = statusbarRepository.text.split("\\");
 
@@ -148,6 +145,7 @@ export module utils {
 		};
 	}
 	
+
 	/**
 	 * Formats the raw host datetime CCYYMMDDHHMMSS into CCYY/MM/DD HH:MM:SS
 	 * @param dateTime Raw unformatted 8-digit date and 6-digit time with no delimiters (CCYYMMDDHHMMSS)
@@ -156,6 +154,7 @@ export module utils {
 		//updated_on:"20190411093844";		
 		return dateTime.substr(0,4) + "/" + dateTime.substr(4,2) + "/" + dateTime.substr(6,2) + " " + dateTime.substr(8,2) + ":" + dateTime.substr(10,2) + ":" + dateTime.substr(12,2);
 	}
+
 
 	/**
 	 * Convert data to Hostbridge-specific encoding
@@ -190,5 +189,4 @@ export module utils {
 		return buf;
 	  }
 	
-	// find a sort extension..
 }

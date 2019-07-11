@@ -183,7 +183,7 @@
                     },
                     "userid": {
                       "type": "string",
-                      "description": "Specifies the CESN/RACF userid to login with."
+                      "description": "Specifies the CICS userid to login with."
                     },
                     "repositories": {
                       "type": "array",

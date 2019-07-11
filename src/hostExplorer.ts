@@ -5,6 +5,7 @@ import * as request from 'request-promise-native';
 import * as xml2js from 'xml2js';
 import * as path from 'path';
 import { FileParser } from "./fileParser";
+import { config } from "./config";
 
 export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeItem> {
 
@@ -96,7 +97,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 	getHosts(): HostTreeItem[] {
 		let hosts: HostTreeItem[] = [];
 
-		utils.getConfig().hosts.forEach((host: any) => {
+		config.getHosts().forEach((host: any) => {
 			let hostNode = new HostTreeItem(host.name, 'host', vscode.TreeItemCollapsibleState.Collapsed, []);
 			hosts.push(hostNode);
 		});
@@ -110,9 +111,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 
 		let regions: HostTreeItem[] = [];
 
-		let host = utils.getConfig().hosts.find(x => x.name === hostNode.label);
-
-		host.regions.forEach((region: any) => {
+		config.getRegions(hostNode.label).forEach((region: any) => {
 			let regionNode = new HostTreeItem(region.name, 'region', vscode.TreeItemCollapsibleState.Collapsed, [], hostNode);
 			regions.push(regionNode);
 		});
@@ -124,13 +123,9 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 
 	getRepositories(regionNode: HostTreeItem): HostTreeItem[] {
 
-		let host = utils.getConfig().hosts.find(x => x.name === regionNode.parent.label);
-
-		let region = host.regions.find(x => x.name === regionNode.label);
-
 		let repositories: HostTreeItem[] = [];
 
-		region.repositories.forEach((repo: any) => {
+		config.getRepositories(regionNode.parent.label, regionNode.label).forEach((repo: any) => {
 			let repoNode = new HostTreeItem(repo, 'repository', vscode.TreeItemCollapsibleState.Collapsed, [], regionNode);
 			repoNode.tooltip = `${regionNode.label}\\${repo}`;
 			repoNode.command = { command: 'hostExplorer.getRepositoryContents', title: 'Get Repository Contents', arguments: [repoNode] };
@@ -378,9 +373,6 @@ export class HostExplorer {
 	}
 
 	private async exec(uri: vscode.Uri) {
-
-		// This doesn't return what you'd expect...
-		// ????  let xxx:HostTreeItem[] = this.hostView.selection;
 
 		if (uri.fsPath === vscode.window.activeTextEditor.document.uri.fsPath) {
 			await vscode.window.activeTextEditor.document.save();
