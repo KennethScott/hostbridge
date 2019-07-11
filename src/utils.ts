@@ -36,9 +36,10 @@ export module utils {
 		let hostAndRegion = `${targetRepo.host}:${targetRepo.region}`;
 
 		if (!passwords[hostAndRegion]) {
+			let userid = config.getRegion(targetRepo.host, targetRepo.region).userid;
 			passwords[hostAndRegion] = await vscode.window.showInputBox({
 				password: true,
-				prompt: "Please enter password for ",	
+				prompt: `Please enter password for ${userid} @ ${targetRepo.host}\\${targetRepo.region}`,	
 				validateInput: text => {
 					return text.length === 0 ? 'Password is required!' : null;
 				},
