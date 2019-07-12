@@ -1,6 +1,14 @@
 # Change Log
 
 
+### 0.8.5 (2019-07-12)
+* Display scriptname in messages
+* Password failures no longer require a refresh of the host explorer to try again
+* Display username/region/host in password prompt  
+* Standardized output channel message format
+* Updated package dependencies
+
+
 ### 0.8.0 (2019-07-10)
 * Setting changes are now detected and the repository browser will automatically refresh to changes.  
 
