@@ -1,35 +1,25 @@
 import * as vscode from 'vscode';
 
-export module config {
+export function get() {
+    return vscode.workspace.getConfiguration('hostbridge');
+}   
 
-    let config:vscode.WorkspaceConfiguration;
-    
-	export function get(): vscode.WorkspaceConfiguration {
-		if (!config) {
-            config = vscode.workspace.getConfiguration('hostbridge');
-		}
-		return config;
-	}
-    export function reset() { config = null; }    
+export function getHosts() {
+    return get().hosts;
+}
 
-    export function getHosts() {
-        return config.hosts;
-    }
+export function getHost(hostName:string) {
+    return getHosts().find(x => x.name === hostName);
+}
 
-    export function getHost(hostName:string) {
-        return getHosts().find(x => x.name === hostName);
-    }
+export function getRegions(hostName:string) {
+    return getHost(hostName).regions;
+}
 
-    export function getRegions(hostName:string) {
-        return getHost(hostName).regions;
-    }
+export function getRegion(hostName:string, regionName:string) {
+    return getRegions(hostName).find(x => x.name === regionName);
+}
 
-    export function getRegion(hostName:string, regionName:string) {
-        return getRegions(hostName).find(x => x.name === regionName);
-    }
-
-    export function getRepositories(hostName:string, regionName:string) {
-        return getRegion(hostName, regionName).repositories;
-    }
-
+export function getRepositories(hostName:string, regionName:string) {
+    return getRegion(hostName, regionName).repositories;
 }

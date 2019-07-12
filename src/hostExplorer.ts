@@ -5,7 +5,7 @@ import * as request from 'request-promise-native';
 import * as xml2js from 'xml2js';
 import * as path from 'path';
 import { FileParser } from "./fileParser";
-import { config } from "./config";
+import * as config from "./config";
 
 export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeItem> {
 
@@ -220,6 +220,7 @@ export class HostExplorer {
 								treeDataProvider.refresh(contentNode.parent);
 							})
 							.catch((err) => {
+								utils.writeFormattedOutput("ERROR");	
 								if (err.statusCode === 401) {
 									utils.setPassword(targetRepo, "");
 									vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
@@ -269,6 +270,7 @@ export class HostExplorer {
 
 				})
 				.catch((err) => {
+					utils.writeFormattedOutput("ERROR");	
 					if (err.statusCode === 401) {
 						utils.setPassword(targetRepo, "");
 						vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
@@ -305,12 +307,15 @@ export class HostExplorer {
 					action: "MAKE", password: password, filename: hbFile.filename, contents: hbFile.contents
 				});
 
+				utils.writeFormattedOutput("INFO", "Attempting to make script...\n");
+
 				const result = await request.post(options)
 					.then((body) => {
 						response = body;
 						treeDataProvider.refresh();
 					})
 					.catch((err) => {
+						utils.writeFormattedOutput("ERROR");	
 						if (err.statusCode === 401) {
 							utils.setPassword(activeRepo, "");
 							vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
@@ -319,6 +324,7 @@ export class HostExplorer {
 					})
 					.finally(() => {
 						utils.getOutputChannel().appendLine(response);
+						utils.writeFormattedOutput("INFO", "End of Response\n");
 						utils.getOutputChannel().show();
 					});
 
@@ -349,13 +355,14 @@ export class HostExplorer {
 					targetRepo: activeRepo,
 					action: "PUT", password: password, filename: hbFile.filename, contents: hbFile.contents
 				});
-
+				
 				const result = await request.post(options)
 					.then((body) => {
 						response = body;
 						treeDataProvider.refresh();
 					})
 					.catch((err) => {
+						utils.writeFormattedOutput("ERROR");	
 						if (err.statusCode === 401) {
 							utils.setPassword(activeRepo, "");
 							vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
@@ -395,9 +402,12 @@ export class HostExplorer {
 					action: "RUN", password: password, filename: hbFile.filename, contents: hbFile.contents
 				});
 
+				utils.writeFormattedOutput("INFO", "Attempting to execute script...\n");
+
 				const result = await request.post(options)
 					.then((body) => { response = body; })
 					.catch((err) => {
+						utils.writeFormattedOutput("ERROR");					
 						if (err.statusCode === 401) {
 							utils.setPassword(activeRepo, "");
 							vscode.window.showErrorMessage('Login Failed!  Refresh and try again.');
@@ -406,7 +416,7 @@ export class HostExplorer {
 					})
 					.finally(() => {
 						utils.getOutputChannel().appendLine(response);
-						utils.getOutputChannel().appendLine(">>> End of Response: " + new Date().toLocaleString());					
+						utils.writeFormattedOutput("INFO", "End of Response\n");				
 						utils.getOutputChannel().show();
 					});
 			}

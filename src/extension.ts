@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as statusBarHelper from "./statusBarHelper";
 import { HostExplorer, HostTreeItem } from './hostExplorer';
-import { config } from "./config";
+import * as config from "./config";
 
 export function activate(context: vscode.ExtensionContext) {	
 
@@ -17,7 +17,6 @@ export function activate(context: vscode.ExtensionContext) {
 	//context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateStatusBarItem));
 
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
-		config.reset();
 		vscode.commands.executeCommand('hostExplorer.refresh');
 	}));
 

@@ -3,7 +3,7 @@ import { UriOptions } from 'request';
 import { statusbarRepository } from "./statusBarHelper";
 import * as fs from 'fs';
 import * as path from 'path';
-import { config } from "./config";
+import * as config from "./config";
 
 export class Repository {
 
@@ -28,6 +28,9 @@ export module utils {
 		}
 		return channel;
 	}	
+	export function writeFormattedOutput(type:string, message?:string) {
+		getOutputChannel().appendLine(`${type}\t${new Date().toLocaleString()}\t${message||""}`);
+	}
 
 
 	let passwords: []|undefined = [];

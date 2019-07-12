@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { QuickPickItem } from 'vscode';
 import { HostTreeItem } from './hostExplorer';
-import { config } from "./config";
+import * as config from "./config";
 
 export let statusbarRepository: vscode.StatusBarItem;
 const ACTIVE_REPOSITORY_NOT_SET:string = "SET ACTIVE REPOSITORY";
