@@ -197,7 +197,7 @@ export class HostExplorer {
 	private async delete(contentNode: HostTreeItem, treeDataProvider: HostTreeDataProvider) {
 
 		await vscode.window.showInputBox({
-			prompt: "Enter 'yes' to confirm you want to delete this file from the host."
+			prompt: `Enter 'yes' to confirm you want to delete ${contentNode.label} from the host.`
 		})
 			.then(async input => {
 
@@ -305,7 +305,7 @@ export class HostExplorer {
 					action: "MAKE", password: password, filename: hbFile.filename, contents: hbFile.contents
 				});
 
-				utils.writeFormattedOutput("INFO", "Attempting to make script...\n");
+				utils.writeFormattedOutput("INFO", `Attempting to make script ${hbFile.filename}...\n`);
 
 				const result = await request.post(options)
 					.then((body) => {
@@ -392,7 +392,7 @@ export class HostExplorer {
 					action: "RUN", password: password, filename: hbFile.filename, contents: hbFile.contents
 				});
 
-				utils.writeFormattedOutput("INFO", "Attempting to execute script...\n");
+				utils.writeFormattedOutput("INFO", `Attempting to execute script ${hbFile.filename}...\n`);
 				
 				const result = await request.post(options)
 					.then((body) => { response = body; })
