@@ -12,11 +12,14 @@ For now the handful of file icons are from Philipp Kief's excellent [Material Ic
 
 ## Features
 
-..coming soon..
+* Right-click context menu options added on items in the File Explorer as well as in the editor for Execute, Make, and Put
+* HBX files automatically associated with javascript
+* Adds a Host Explorer that allows browsing host repositories with options to Get and Delete
+* Active repository can be set via right-clicking the repository in the Host Explorer, or via the status bar option.
+* Multiple hosts with different CICS regions and repositories are supported
 
-## Requirements
+![Screenshot](Screenshot.PNG?raw=true)
 
-It is assumed you have access to a mainframe environment running Hostbridge.
 
 ## Extension Settings
 

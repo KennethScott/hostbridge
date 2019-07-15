@@ -1,6 +1,10 @@
 # Change Log
 
 
+### 0.8.6 (2019-07-15)
+* Added features and screenshot to README
+
+
 ### 0.8.5 (2019-07-12)
 * Display scriptname in messages
 * Password failures no longer require a refresh of the host explorer to try again
