@@ -1,6 +1,10 @@
 # Change Log
 
 
+### 0.8.7 (2019-07-16)
+* Shrink screenshot and add example hostbridge.hosts configuration
+
+
 ### 0.8.6 (2019-07-15)
 * Added features and screenshot to README
 

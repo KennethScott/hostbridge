@@ -2,13 +2,13 @@
 
 This extension adds options to Make, Execute, and Put Hostbridge scripts on the Explorer context menu as well as the Editor context menu.  It also adds a Hostbridge Explorer that acts as a host repository browser.  The repository browser provides context menu options to Get and Delete content items.
 
-Please note this extension is still considered beta.
+_Please note this extension is still considered **beta**._
 
 ## Disclaimer
-This is an unofficial HostBridge extension.  I am not affiliated with [HostBridge](http://www.hostbridge.com).
+This is an unofficial HostBridge extension.  I am not affiliated with [HostBridge](http://www.hostbridge.com).  This extension was developed against Hostbridge v6.78 - anything else and your mileage may vary.
 
 ## Credits
-For now the handful of file icons are from Philipp Kief's excellent [Material Icons Theme](https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme).
+For now the handful of file icons used in the Host Explorer are from Philipp Kief's excellent [Material Icons Theme](https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme).
 
 ## Features
 
@@ -29,6 +29,29 @@ This extension contributes the following settings:
 * `hostbridge.activeRepository`: The currently selected hostbridge repository
 * `hostbridge.tempFolderRoot`: If not set, defaults to current workspace folder
 * `hostbridge.tempFolderName`: Folder name relative to Temp Folder Root to use for saving downloaded content (defaults to HostBridge\tempFiles)
+
+
+```javascript
+    "hostbridge.hosts": [
+        {
+            "name": "HostAbc",
+            "regions": [
+                {
+                    "name": "CICSAAAA",
+                    "port": 8888,
+                    "protocol": "https",
+                    "userid": "MYSIGNON",
+                    "repositories": [
+                        "Repo1",
+                        "Repo2",
+                        "Repo3"
+                    ]
+                },
+            ]
+        }
+    ],
+````
+
 
 ## License
 
