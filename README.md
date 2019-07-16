@@ -5,10 +5,12 @@ This extension adds options to Make, Execute, and Put Hostbridge scripts on the 
 _Please note this extension is still considered **beta**._
 
 ## Disclaimer
-This is an unofficial HostBridge extension.  I am not affiliated with [HostBridge](http://www.hostbridge.com).  This extension was developed against Hostbridge v6.78 - anything else and your mileage may vary.
+* This is an unofficial HostBridge extension and is therefore unsupported.  I am not affiliated with [HostBridge](http://www.hostbridge.com).  
+* This extension was developed against Hostbridge v6.78. 
 
 ## Credits
-For now the handful of file icons used in the Host Explorer are from Philipp Kief's excellent [Material Icons Theme](https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme).
+* The functionality in this extension is modeled after the original Eclipse extension provided by Hostbridge. 
+* For now the handful of file icons used in the Host Explorer are from Philipp Kief's excellent [Material Icons Theme](https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme).
 
 ## Features
 
