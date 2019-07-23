@@ -24,7 +24,7 @@ export module utils {
 	let channel: vscode.OutputChannel;
 	export function getOutputChannel(): vscode.OutputChannel {
 		if (!channel) {
-			channel = vscode.window.createOutputChannel('hostbridge');
+			channel = vscode.window.createOutputChannel('Hostbridge');
 		}
 		return channel;
 	}	
