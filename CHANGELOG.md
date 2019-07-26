@@ -1,6 +1,11 @@
 # Change Log
 
 
+### 0.8.9 (2019-07-26)
+* Capitalized Hostbridge output channel name
+* Added setup instructions to README
+
+
 ### 0.8.8 (2019-07-16)
 * README updates
 
