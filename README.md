@@ -23,15 +23,9 @@ _Please note this extension is still considered **beta**._
 ![Screenshot](Screenshot.PNG?raw=true)
 
 
-## Extension Settings
+## Setup
 
-This extension contributes the following settings:
-
-* `hostbridge.hosts`: The available hosts and their respective regions and repositories
-* `hostbridge.activeRepository`: The currently selected hostbridge repository
-* `hostbridge.tempFolderRoot`: If not set, defaults to current workspace folder
-* `hostbridge.tempFolderName`: Folder name relative to Temp Folder Root to use for saving downloaded content (defaults to HostBridge\tempFiles)
-
+* To get started, simply define all your hosts, regions, and repositories via Settings -> Hostbridge -> Hosts (or by editing your settings.json file and adding a **hostbridge.hosts** node).
 
 ```javascript
     "hostbridge.hosts": [
@@ -53,6 +47,17 @@ This extension contributes the following settings:
         }
     ],
 ````
+* By default, any files downloaded from a host repository are saved to your workspace folder root\HostBridge\tempFiles.  This location can be changed via settings.
+
+
+## Extension Settings
+
+This extension contributes the following settings:
+
+* `hostbridge.hosts`: The available hosts and their respective regions and repositories
+* `hostbridge.activeRepository`: The currently selected hostbridge repository
+* `hostbridge.tempFolderRoot`: If not set, defaults to current workspace folder
+* `hostbridge.tempFolderName`: Folder name relative to Temp Folder Root to use for saving downloaded content (defaults to HostBridge\tempFiles)
 
 
 ## License
