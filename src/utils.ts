@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { UriOptions } from 'request';
 import { statusbarRepository } from "./statusBarHelper";
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as config from "./config";
 
@@ -68,7 +68,7 @@ export module utils {
 			let tempFolderName:string = config.get().get('tempFolderName') || "";
 
 			let pathAndFilename = path.join(tempFolderRoot, tempFolderName, filename);
-			fs.writeFileSync(pathAndFilename, content);
+			fs.outputFileSync(pathAndFilename, content);
 
 			const finalUri = vscode.Uri.file(pathAndFilename);
 			vscode.workspace.openTextDocument(finalUri).then((doc) => {
