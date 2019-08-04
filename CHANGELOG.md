@@ -1,6 +1,11 @@
 # Change Log
 
 
+### 0.9.0 (2019-08-04)
+* Change get content function to create temp folder if it doesn't exist
+* Change repository browser to use host content type (instead of file extension) to determine icon
+
+
 ### 0.8.9 (2019-07-26)
 * Capitalized Hostbridge output channel name
 * Added setup instructions to README
