@@ -80,7 +80,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostTreeIte
 						else if (result.hbjs_listing.resource[0].entry) {
 							result.hbjs_listing.resource[0].entry.sort((a: any, b: any) => a.$.name.localeCompare(b.$.name));
 							result.hbjs_listing.resource[0].entry.forEach(entry => {
-								let contentNode = new HostTreeItem(entry.$.name, 'content', vscode.TreeItemCollapsibleState.None, [], repoNode);
+								let contentNode = new HostTreeItem(entry.$.name, 'content', vscode.TreeItemCollapsibleState.None, [], repoNode, entry.$.type, entry.$.content_type);
 								let formattedDateTime = utils.formatHostDateTime(entry.$.updated_on);
 								contentNode.tooltip = `${targetRepo.region}\\${repoNode.label}\\${entry.$.name} (${entry.$.updated_by} on ${formattedDateTime})`;
 								children.push(contentNode);
@@ -415,14 +415,18 @@ export class HostExplorer {
 export class HostTreeItem extends vscode.TreeItem {
 	children: HostTreeItem[] | undefined;
 	parent: HostTreeItem | undefined;
+	type: string | undefined;
+	contentType: string | undefined;
 
-	constructor(label: string, contextValue: string, collapsibleState: vscode.TreeItemCollapsibleState, children?: HostTreeItem[], parent?: HostTreeItem) {
+	constructor(label: string, contextValue: string, collapsibleState: vscode.TreeItemCollapsibleState, children?: HostTreeItem[], parent?: HostTreeItem, type?: string, contentType?: string) {
 
 		super(label, collapsibleState);
 
 		this.children = children;
 		this.parent = parent;
 		this.contextValue = contextValue;
+		this.type = type;
+		this.contentType = contentType;
 
 		switch (contextValue) {
 			case 'host':
@@ -433,39 +437,47 @@ export class HostTreeItem extends vscode.TreeItem {
 			case 'content':
 				// get extension if exists and determine type..
 				let icon: string;
-				let pieces: string[] = label.split('.');
-				if (pieces.length > 1) {
-					switch (pieces[pieces.length - 1]) {
-						case 'css':
-							icon = 'css.svg';
-							break;
-						case 'jpg':
-						case 'gif':
-							icon = 'image.svg';
-							break;
-						case 'htm':
-						case 'html':
-							icon = 'html.svg';
-							break;
-						case 'js':
-						case 'hbx':
-							icon = 'javascript.svg';
-							break;
-						case 'xml':
-							icon = 'xml.svg';
-							break;
-						default:
-							icon = 'document.svg';
-							break;
-					}
-				}
-				else {
+
+				if (this.type.trim() === 'C') {  // C=executable, S=source, O=metadata
 					icon = 'javascript.svg';
 				}
+				else {
+					let pieces: string[] = label.split('.');
+					if (pieces.length > 1) {
+						switch (pieces[pieces.length - 1]) {
+							case 'css':
+								icon = 'css.svg';
+								break;
+							case 'jpg':
+							case 'gif':
+								icon = 'image.svg';
+								break;
+							case 'htm':
+							case 'html':
+								icon = 'html.svg';
+								break;
+							case 'js':
+							case 'hbx':
+								icon = 'javascript.svg';
+								break;
+							case 'xml':
+								icon = 'xml.svg';
+								break;
+							default:
+								icon = 'document.svg';
+								break;
+						}
+					}
+					else {
+						icon = 'javascript.svg';
+					}
+				}
+
 				this.iconPath = {
 					light: path.join(__filename, '..', '..', 'resources', 'light', icon),
 					dark: path.join(__filename, '..', '..', 'resources', 'dark', icon)
 				};
+
 				break;
 			default:
 				break;
