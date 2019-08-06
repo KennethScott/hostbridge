@@ -1,6 +1,10 @@
 # Change Log
 
 
+### 0.9.1 (2019-08-06)
+* Fix:  If tempFolderRoot is not set and no workspace is open, properly default to opening virtually
+
+
 ### 0.9.0 (2019-08-04)
 * Change get content function to create temp folder if it doesn't exist
 * Change repository browser to use host content type (instead of file extension) to determine icon

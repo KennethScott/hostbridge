@@ -58,9 +58,9 @@ export module utils {
 
 	export function openHostContent(filename:string, content:string) {
 
-		// use config setting for temp root if provided.  otherwise default to workspace
+		// use config setting for temp root if provided.  otherwise attempt to default to workspace.. if that doesn't work, open virtually..
 		let tempFolderRoot:string = config.get().get('tempFolderRoot') ||
-									vscode.workspace.workspaceFolders[0].uri.fsPath;
+									(vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0].uri.fsPath);
 		
 		if (tempFolderRoot) {
 
